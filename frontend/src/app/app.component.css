@@ -1,0 +1,38 @@
+
+  .ngx-monaco-editor {
+    height: 600px;
+    width: 100%;
+  }
+
+  .ngx-monaco-editor2 {
+    height: 180px;
+    width: 100%;
+  }
+  .column {
+    float: left;
+    width: 50%;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    display: table;
+    clear: both;
+  }
+
+  body {margin: 0; height: 100%; overflow-y:scroll; }
+
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }

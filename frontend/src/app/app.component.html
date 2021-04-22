@@ -1,0 +1,181 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <title>Traductor</title>
+
+</head>
+
+<body>
+
+  <div *ngIf="banderaeditorr">
+    <mat-toolbar>
+      <button mat-button [matMenuTriggerFor]="menu">Archivo</button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)='abrir()'>
+          Abrir<input id="inputt" type="file" style="display: none" file-handler
+            (change)="fileChanged($event.target.files)">
+        </button>
+        <button mat-menu-item (click)='guardar()'>Guardar</button>
+        <button mat-menu-item (click)='cerrarpestania()'>Cerrar Pestania</button>
+      </mat-menu>
+
+      <button mat-button (click)='compilar()'>Compilar</button>
+
+      <button mat-button (click)='optimizar()'>Optimizar C3D</button>
+
+      <button mat-button [matMenuTriggerFor]="menu2">Reportes</button>
+      <mat-menu #menu2="matMenu">
+        <button mat-menu-item (click)='reporteast()'>
+          Reporte de AST
+        </button>
+        <button mat-menu-item (click)='reportebloque()'>
+          Reporte de Bloques
+        </button>
+        <button mat-menu-item (click)='reporteerrores()'>
+          Reporte de Errores
+        </button>
+        <button mat-menu-item (click)='reportesimbolos()'>
+          Reporte de Simbolos
+        </button>
+        <button mat-menu-item (click)='reportefunciones()'>
+          Reporte de Funciones
+        </button>
+        <button mat-menu-item (click)='reporteoptimizacion()'>
+          Reporte de Optimizaciones
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <br>
+
+    <div class="row">
+      <div class="column">
+
+        <mat-tab-group [selectedIndex]="selected.value" (selectedIndexChange)="selected.setValue($event)">
+          <mat-tab *ngFor="let tab of tabs" [label]="tab.name">
+            <ngx-monaco-editor [formControl]="tab.formm" class="ngx-monaco-editor" [options]="editorOptions"
+              [(ngModel)]="tab.codee" (init)="editorInit($event)"></ngx-monaco-editor>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+      <div class="column">
+
+        <mat-tab-group>
+          <mat-tab label="Resultado">
+            <ngx-monaco-editor class="ngx-monaco-editor" [options]="editorOptions2" [(ngModel)]="code2"
+              (init)="editorInit2($event)"></ngx-monaco-editor>
+          </mat-tab>
+        </mat-tab-group>
+
+      </div>
+    </div>
+
+    <mat-toolbar>
+      <button mat-button>Consola</button>
+    </mat-toolbar>
+
+    <ngx-monaco-editor class="ngx-monaco-editor2" [options]="editorOptions3" [(ngModel)]="code3"
+      (init)="editorInit3($event)"></ngx-monaco-editor>
+  </div>
+
+  <div *ngIf="banderaast">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditorast()'>Regresar</button>
+    </mat-toolbar>
+    <img [src]="urlimagen">
+  </div>
+
+  <div *ngIf="banderabloque">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditorbloque()'>Regresar</button>
+    </mat-toolbar>
+    <img [src]="urlimagen2">
+  </div>
+
+  <div *ngIf="banderareporteerrores">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditorreporteerrores()'>Regresar</button>
+    </mat-toolbar>
+    <pre>{{cadenaerrores}}</pre>
+  </div>
+
+  <div *ngIf="banderareportesimbolos">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditorreportesimbolos()'>Regresar</button>
+    </mat-toolbar>
+
+    <table style="width:100%">
+      <tr>
+        <th>Identificador</th>
+        <th>Tipo de dato</th>
+        <th>Ubicacion relativa</th>
+        <th>Inicio Indice</th>
+        <th>Tamanio</th>
+      </tr>
+      <tr *ngFor="let simbolo of simbolos">
+        <td>{{simbolo.id}}</td>
+        <td>{{simbolo.tipo3}}</td>
+        <td>{{simbolo.ubicacionrelativa}}</td>
+        <td>{{simbolo.inicioindice}}</td>
+        <td>{{simbolo.tamanio}}</td>
+      </tr>
+    </table>
+
+  </div>
+
+
+
+  <div *ngIf="banderareportefunciones">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditorfunciones()'>Regresar</button>
+    </mat-toolbar>
+
+    <table>
+      <tr>
+        <th>Tipo 1</th>
+        <th>Tipo 2</th>
+        <th>Tipo3</th>
+        <th>Nombre</th>
+        <th>Linea</th>
+        <th>Columna</th>
+      </tr>
+      <tr *ngFor="let simbolo of funciones">
+        <td>{{simbolo.tipo1}}</td>
+        <td>{{simbolo.tipo2}}</td>
+        <td>{{simbolo.tipo3}}</td>
+        <td>{{simbolo.id}}</td>
+        <td>{{simbolo.linea}}</td>
+        <td>{{simbolo.columna}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="banderareporteoptimizacion">
+    <mat-toolbar>
+      <button mat-button (click)='regresareditoroptimizacion()'>Regresar</button>
+    </mat-toolbar>
+
+    <table>
+      <tr>
+        <th>Descripcion</th>
+        <th>Descripcion 2</th>
+        <th>Linea</th>
+        <th>Columna</th>
+      </tr>
+      <tr *ngFor="let simbolo of optimizaciones">
+        <td>{{simbolo.des}}</td>
+        <td>{{simbolo.des2}}</td>
+        <td>{{simbolo.linea}}</td>
+        <td>{{simbolo.columna}}</td>
+      </tr>
+    </table>
+  </div>
+
+</body>
+
+</html>
