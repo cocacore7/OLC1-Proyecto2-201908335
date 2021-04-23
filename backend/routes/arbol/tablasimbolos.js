@@ -1,7 +1,9 @@
 const { TIPO_VALOR } = require("./instrucciones");
 
 const TIPO_DATO = {
+    ENTERO:         'VAL_ENTERO',
     DECIMAL:        'VAL_DECIMAL',
+    CARACTER:       'VAL_CARACTER',
     CADENA:         'VAL_CADENA',
     BANDERA:        'VAL_BANDERA'
 }
