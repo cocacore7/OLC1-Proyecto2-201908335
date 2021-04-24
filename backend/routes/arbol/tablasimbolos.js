@@ -27,18 +27,11 @@ class TS {
             console.log('La variable ya existe');
         }
         else{
-            if(tipo == valor.tipo){
-                // Si hay casteos implicitos aca los verifican
-                /*
-                    if(tipo=="decimal" && valor.tipo=="int"){
-                        valor.tipo=="decimal";
-                        valor.valor==Number(valor.valor);
-                    }
-                */
+            if (tipo == valor.tipo){
+                //Si hay casteos implicitos aca los verifican
                 this._simbolos.push(crearSimbolo(tipo, id, valor.valor));
-            }
-            else {
-                // Manejan si el casteo no exites
+            }else{
+                //Manejan si el casteo no existe
                 console.log('Error Semantico');
             }
         }
@@ -63,11 +56,13 @@ class TS {
             else{
                 // a=3; donde a es un decimal EN ESTA PARTE VERIFICAN LOS POSIBLES CASTEOS
                 switch(simbolo.tipo){
-                    case TIPO_VALOR.DECIMAL:
+                    case TIPO_VALOR.ENTERO:
                         switch(valor.tipo){
-                            case TIPO_VALOR.CADENA:
-                                console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                            
+                            case TIPO_VALOR.DECIMAL:
+                                simbolo.valor==Math.trunc(valor.valor);
+                            break;
+
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
                                     simbolo.valor=1;
@@ -75,34 +70,99 @@ class TS {
                                 else if (valor.valor==false){
                                     simbolo.valor=0;
                                 }
-                                break;
+                            break;
+
+                            default:
+                                console.log('No se pudo actualizar por tipos incompatibles');
+                                return;
                         }
-                        break;
+    
+                    break;
+                    
+                    case TIPO_VALOR.DECIMAL:
+                        switch(valor.tipo){
+                            case TIPO_VALOR.ENTERO:
+                                simbolo.tipo==valor.valor;
+                            break;
+            
+                            case TIPO_VALOR.BANDERA:
+                                if(valor.valor==true){
+                                    simbolo.valor=1;
+                                }
+                                else if (valor.valor==false){
+                                    simbolo.valor=0;
+                                }
+                            break;
+
+                            default:
+                                console.log('No se pudo actualizar por tipos incompatibles');
+                                return;
+                        }
+    
+                    break;
+    
+                    case TIPO_VALOR.CARACTER:
+                        switch(valor.tipo){
+                            
+                            case TIPO_VALOR.CADENA:
+                                simbolo.valor=valor.valor;
+                            break;
+            
+                            default:
+                                console.log('No se pudo actualizar por tipos incompatibles');
+                                return;
+                        }
+    
+                    break;
+    
                     case TIPO_VALOR.CADENA:
                         switch(valor.tipo){
-                            case TIPO_VALOR.DECIMAL:
-                                console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
-                            case TIPO_VALOR.BANDERA:
+                            
+                            case TIPO_VALOR.CARACTER:
+                                simbolo.valor=valor.valor;
+                            break;
+            
+                            default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
                                 return;
                         }
-                        break;
+    
+                    break;
+    
                     case TIPO_VALOR.BANDERA:
                         switch(valor.tipo){
+                            case TIPO_VALOR.ENTERO:
+                                if (valor.valor == 1){
+                                    simbolo.valor = true;
+                                }else if (valor.valor == 0){
+                                    simbolo.valor = false;
+                                }else{
+                                    console.log('No se pudo actualizar por tipos incompatibles');
+                                    return;
+                                }
+                            break;
+                            
                             case TIPO_VALOR.DECIMAL:
-                                if(valor.valor==1){
-                                    simbolo.valor=true;
+                                if (valor.valor == 1){
+                                    simbolo.valor = true;
+                                }else if (valor.valor == 0){
+                                    simbolo.valor = false;
+                                }else{
+                                    console.log('No se pudo actualizar por tipos incompatibles');
+                                    return;
                                 }
-                                else if (valor.valor==0){
-                                    simbolo.valor=false;
-                                }
+                            break;
+            
+                            case TIPO_VALOR.CARACTER:
+                                console.log('No se pudo actualizar por tipos incompatibles');
                                 return;
+            
                             case TIPO_VALOR.CADENA:
                                 console.log('No se pudo actualizar por tipos incompatibles');
                                 return;
                         }
-                        break;
+    
+                    break;
                 }
             }
         }

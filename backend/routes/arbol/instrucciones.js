@@ -23,7 +23,9 @@ const TIPO_OPERACION = {
     NOIGUAL:            'OP_NOIGUAL',
     OR:                 'OP_OR',
     AND:                'OP_AND',
-    NOT:                'OP_NOT'
+    XOR:                'OP_XOR',
+    NOT:                'OP_NOT',
+    CASTEO:             'OP_CASTEO'
 }
 
 const TIPO_INSTRUCCION = {
@@ -81,6 +83,21 @@ const INSTRUCCIONES = {
             expresion: expresion
         }
     },
+    nuevoMetodo: function(identificador, parametros, instrucciones){
+        return {
+            tipo: TIPO_INSTRUCCION.METODO,
+            identificador: identificador,
+            parametros: parametros,
+            instrucciones: instrucciones
+        }
+    },
+    nuevoMain: function(identificador, parametros){
+        return{
+            tipo: TIPO_INSTRUCCION.MAIN,
+            identificador: identificador,
+            parametros: parametros
+        }
+    },
     nuevoWhile: function(condicion, instrucciones){
         return{
             tipo: TIPO_INSTRUCCION.WHILEE,
@@ -109,21 +126,6 @@ const INSTRUCCIONES = {
             condicion: condicion,
             casos: casos,
             definido: definido
-        }
-    },
-    nuevoMetodo: function(identificador, parametros, instrucciones){
-        return {
-            tipo: TIPO_INSTRUCCION.METODO,
-            identificador: identificador,
-            parametros: parametros,
-            instrucciones: instrucciones
-        }
-    },
-    nuevoMain: function(identificador, parametros){
-        return{
-            tipo: TIPO_INSTRUCCION.MAIN,
-            identificador: identificador,
-            parametros: parametros
         }
     }
 }
