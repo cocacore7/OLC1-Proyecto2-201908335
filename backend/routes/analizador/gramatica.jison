@@ -45,6 +45,8 @@
 "||"                    return 'or';
 "&&"                    return 'and';
 "!"                     return 'not';
+"++"                    return 'incremento';
+"--"                    return 'decremento';
 
 /* Sentencias de Control */
 "if"                    return 'si';
@@ -119,26 +121,28 @@ INICIO
     : CUERPO EOF { console.log('Funciono'); return $1; };
 
 CUERPO
-    : CUERPO DECLARACION    { $1.push($2); $$=$1; }
-    | CUERPO ASIGNACION     { $1.push($2); $$=$1; }
+    : CUERPO MAIN           { $1.push($2); $$=$1; }
     | CUERPO METODO         { $1.push($2); $$=$1; }
-    | CUERPO MAIN           { $1.push($2); $$=$1; }
-    | DECLARACION           { $$ = [$1]; }
-    | ASIGNACION            { $$=[$1]; }
+    | CUERPO DECLARACION    { $1.push($2); $$=$1; }
+    | CUERPO ASIGNACION     { $1.push($2); $$=$1; }
+    | MAIN                  { $$=[$1]; }
     | METODO                { $$=[$1]; }
-    | MAIN                  { $$=[$1]; };
+    | DECLARACION           { $$ = [$1]; }
+    | ASIGNACION            { $$=[$1]; };
 
 CUERPO2
     : CUERPO2 DECLARACION   { $1.push($2); $$=$1; }
-    | CUERPO2 IMPRIMIR      { $1.push($2); $$=$1; }
-    | CUERPO2 WHILEE        { $1.push($2); $$=$1; }
-    | CUERPO2 SI            { $1.push($2); $$=$1; }
     | CUERPO2 ASIGNACION    { $1.push($2); $$=$1; }
-    | DECLARACION           { $$ = [$1]; }
+    | CUERPO2 IMPRIMIR      { $1.push($2); $$=$1; }
+    | CUERPO2 SI            { $1.push($2); $$=$1; }
+    | CUERPO2 WHILEE        { $1.push($2); $$=$1; }
+    | CUERPO2 DOWHILEE      { $1.push($2); $$=$1; }
     | IMPRIMIR              { $$ = [$1]; }
+    | DECLARACION           { $$ = [$1]; }
+    | ASIGNACION            { $$=[$1]; }
     | SI                    { $$=[$1]; }
     | WHILEE                { $$=[$1]; }
-    | ASIGNACION            { $$=[$1]; };
+    | DOWHILEE              { $$=[$1]; };
 
 MAIN
     :exec identificador parentesisa parentesisc pcoma {$$=INSTRUCCIONES.nuevoMain($2, []);};
@@ -146,29 +150,38 @@ MAIN
 METODO
     : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec {$$=INSTRUCCIONES.nuevoMetodo($2, [], $6)};
 
-ASIGNACION
-    : identificador igual EXP pcoma { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
-    | identificador igual CASTEO pcoma { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); };
-
 DECLARACION
     : TIPO identificador igual EXP pcoma    { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
     | TIPO identificador pcoma              { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); }
     | TIPO identificador igual CASTEO pcoma { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); };
+
+ASIGNACION
+    : identificador igual EXP pcoma     { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
+    | identificador igual CASTEO pcoma  { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); };
+
 
 IMPRIMIR
     : imprimir parentesisa EXP parentesisc pcoma    { $$=INSTRUCCIONES.nuevoImprimir($3); }
     | imprimir parentesisa parentesisc pcoma        { $$=INSTRUCCIONES.nuevoImprimir("\n"); }
     | imprimir parentesisa CASTEO parentesisc pcoma { $$=INSTRUCCIONES.nuevoImprimir($3); };
 
-CASTEO
-    : parentesisa TIPO parentesisc EXP { $$=INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, INSTRUCCIONES.nuevoValor($2,0), $4); };
-
 WHILEE
-    : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec{ $$=INSTRUCCIONES.nuevoWhile($3, $6); };
+    : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec        { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
+    | mientras parentesisa CASTEO parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoWhile($3, $6); };
+
+DOWHILEE
+    : do llavea CUERPO2 llavec mientras parentesisa EXP parentesisc pcoma       { $$=INSTRUCCIONES.nuevoDoWhile($7, $3); }
+    | do llavea CUERPO2 llavec mientras parentesisa CASTEO parentesisc pcoma    { $$=INSTRUCCIONES.nuevoDoWhile($7, $3); };
+
+FOR
+    : for parentesisa DECLARACION pcoma EXP pcoma EXP parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoFor($3, $5,$7,$10); };
 
 SI
     :si parentesisa EXP parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec    { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
     |si parentesisa EXP parentesisc llavea CUERPO2 llavec                               { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); };
+
+CASTEO
+    : parentesisa TIPO parentesisc EXP { $$=INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, INSTRUCCIONES.nuevoValor($2,0), $4); };
 
 TIPO
     : entero                                            { $$ = TIPO_DATO.ENTERO; }

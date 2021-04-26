@@ -28,16 +28,16 @@ const TIPO_OPERACION = {
 }
 
 const TIPO_INSTRUCCION = {
-    IMPRIMIR:           'INSTR_IMPRIMIR',
+    MAIN:               'INSTR_MAIN',
+    METODO:             'INSTR_METODO',
     DECLARACION:        'INSTR_DECLARACION',
     ASIGNACION:         'INSTR_ASIGNACION',
+    IMPRIMIR:           'INSTR_IMPRIMIR',
     WHILEE:             'INSTR_WHILE',
     DOWHILEE:           'INSTR_DOWHILE',
     FORR:               'INSTR_FOR',
     IFF:                'INSTR_IF',
-    SWITCHH:            'INSTR_SWITCH',
-    METODO:             'INSTR_METODO',
-    MAIN:               'INSTR_MAIN'
+    SWITCHH:            'INSTR_SWITCH'
 }
 
 const INSTRUCCIONES = {
@@ -61,10 +61,19 @@ const INSTRUCCIONES = {
             valor:valor
         }
     },
-    nuevoImprimir: function(expresion){
+    nuevoMain: function(identificador, parametros){
         return{
-            tipo: TIPO_INSTRUCCION.IMPRIMIR,
-            expresion: expresion
+            tipo: TIPO_INSTRUCCION.MAIN,
+            identificador: identificador,
+            parametros: parametros
+        }
+    },
+    nuevoMetodo: function(identificador, parametros, instrucciones){
+        return {
+            tipo: TIPO_INSTRUCCION.METODO,
+            identificador: identificador,
+            parametros: parametros,
+            instrucciones: instrucciones
         }
     },
     nuevaDeclaracion: function(tipo, id, expresion){
@@ -82,19 +91,10 @@ const INSTRUCCIONES = {
             expresion: expresion
         }
     },
-    nuevoMetodo: function(identificador, parametros, instrucciones){
-        return {
-            tipo: TIPO_INSTRUCCION.METODO,
-            identificador: identificador,
-            parametros: parametros,
-            instrucciones: instrucciones
-        }
-    },
-    nuevoMain: function(identificador, parametros){
+    nuevoImprimir: function(expresion){
         return{
-            tipo: TIPO_INSTRUCCION.MAIN,
-            identificador: identificador,
-            parametros: parametros
+            tipo: TIPO_INSTRUCCION.IMPRIMIR,
+            expresion: expresion
         }
     },
     nuevoWhile: function(condicion, instrucciones){
@@ -104,11 +104,20 @@ const INSTRUCCIONES = {
             instrucciones: instrucciones
         }
     },
-    nuevoDoWhile: function(condicion, instrucciones){
+    nuevoDoWhile: function(instrucciones, condicion){
         return{
             tipo: TIPO_INSTRUCCION.DOWHILEE,
             condicion: condicion,
             instrucciones: instrucciones
+        }
+    },
+    nuevoFor: function(declaracion, condicion, cambio, cuerpoFor){
+        return{
+            tipo: TIPO_INSTRUCCION.FORR,
+            declaracion: declaracion,
+            condicion: condicion,
+            cambio: cambio,
+            cuerpoFor: cuerpoFor
         }
     },
     nuevoIf: function(condicion, cuerpoverdadero, cuerpofalso){

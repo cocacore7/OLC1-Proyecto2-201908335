@@ -75,6 +75,12 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal){
         else if(instruccion.tipo == TIPO_INSTRUCCION.WHILEE){
             ejecutarwhile(instruccion, tsglobal, tslocal);
         }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DOWHILEE){
+            ejecutardowhile(instruccion, tsglobal, tslocal);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.FORR){
+            ejecutarfor(instruccion, tsglobal, tslocal);
+        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.IFF){
             ejecutarif(instruccion, tsglobal, tslocal);
         }
@@ -178,17 +184,49 @@ function ejecutarwhile(instruccion, tsglobal, tslocal){
         salida = "Error Semantico";
     }else{
         while(valor.valor){
-            var error = ejecutarbloqueglobal(instruccion.instrucciones,tsglobal,tslocal);
-            if (error == undefined){
-                salida = "Error Semantico";
-                break;
-            }
+            ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal);
             valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
             if (valor == undefined){
                 salida = "Error Semantico";
                 break;
             }
         }
+    }
+}
+
+function ejecutardowhile(instruccion, tsglobal, tslocal){
+    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal);
+        valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            while(valor.valor){
+                ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal);
+                valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+                if (valor == undefined){
+                    salida = "Error Semantico";
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function ejecutarfor(instruccion, tsglobal, tslocal){
+    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal);
+        valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }
+        console.log("Falta Terminar");
     }
 }
 
