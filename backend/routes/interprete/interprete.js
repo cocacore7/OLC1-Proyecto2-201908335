@@ -32,13 +32,17 @@ function ejecutar(arbol){
     else{
         console.log(main.length)
         console.log("No puede haber mas de un main");
+        salida = "Error Semantico"
     }
     return salida;
 }
 
 function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal, metodos, main){
     instrucciones.forEach((instruccion)=>{
-        if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
+        if (salida == "Error Semantico"){
+            console.log("Error Semantico")
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionglobal(instruccion, tsglobal,tslocal);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
@@ -56,7 +60,10 @@ function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal, metodos, main){
 
 function ejecutarbloquelocal(instrucciones, tsglobal, tslocal){
     instrucciones.forEach((instruccion)=>{
-        if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
+        if (salida == "Error Semantico"){
+            console.log("Error Semantico")
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionlocal(instruccion, tsglobal,tslocal);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
@@ -71,65 +78,119 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal){
         else if(instruccion.tipo == TIPO_INSTRUCCION.IFF){
             ejecutarif(instruccion, tsglobal, tslocal);
         }
-    
     });
 }
 
 function ejecutarimprimir(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal);
     console.log(valor)
-    salida+=valor.valor+'\n';
-    console.log(valor.valor);
+    
+    if (instruccion.expresion === "\n"){
+        salida+='\n';
+    }
+    else if (valor === undefined){
+        salida = "Error Semantico";
+    }
+    else{
+        salida+=valor.valor+'\n';
+    }
 }
 
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal);
-    tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor);
+        if (error == undefined){
+            salida = "Error Semantico";
+        }
+    }
 }
 
 function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal);
-    tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor);
+        if (error == undefined){
+            salida = "Error Semantico";
+        }
+    }
 }
 
 function ejecutarasignacionglobal(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal);
     if(tsglobal.obtener(instruccion.identificador)!=undefined){
-        tsglobal.actualizar(instruccion.identificador, valor);
+        var error =  tsglobal.actualizar(instruccion.identificador, valor);
+        if (error == undefined){
+            salida = "Error Semantico";
+        }
     }
 }
 
 function ejecutarasignacionlocal(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal);
-    if(tslocal.obtener(instruccion.identificador)!=undefined){
-        tslocal.actualizar(instruccion.identificador, valor);
-    }
-    else if(tsglobal.obtener(instruccion.identificador)!=undefined){
-        tsglobal.actualizar(instruccion.identificador, valor);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        if(tslocal.obtener(instruccion.identificador)!=undefined){
+            var error = tslocal.actualizar(instruccion.identificador, valor);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
+        else if(tsglobal.obtener(instruccion.identificador)!=undefined){
+            var error = tsglobal.actualizar(instruccion.identificador, valor);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
     }
 }
 
 function ejecutarif(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
-    if(valor.valor==true){
-        ejecutarbloqueglobal(instruccion.cuerpoverdadero,tsglobal,tslocal);
-    }
-    else if(valor.valor==false){
-        if(instruccion.cuerpofalso!=undefined){
-            ejecutarbloqueglobal(instruccion.cuerpofalso,tsglobal,tslocal);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        if(valor.valor==true){
+            var error = ejecutarbloqueglobal(instruccion.cuerpoverdadero,tsglobal,tslocal);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
+        else if(valor.valor==false){
+            if(instruccion.cuerpofalso!=undefined){
+                var error = ejecutarbloqueglobal(instruccion.cuerpofalso,tsglobal,tslocal);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }
         }
     }
 }
 
 function ejecutarwhile(instruccion, tsglobal, tslocal){
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
-    while(valor.valor){
-        ejecutarbloqueglobal(instruccion.instrucciones,tsglobal,tslocal);
-        valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        while(valor.valor){
+            var error = ejecutarbloqueglobal(instruccion.instrucciones,tsglobal,tslocal);
+            if (error == undefined){
+                salida = "Error Semantico";
+                break;
+            }
+            valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal);
+            if (valor == undefined){
+                salida = "Error Semantico";
+                break;
+            }
+        }
     }
 }
-
-
 
 function procesarexpresion(expresion, tsglobal, tslocal){
     if(expresion.tipo == TIPO_OPERACION.SUMA){
@@ -466,12 +527,6 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                     case TIPO_DATO.DECIMAL:
                         //if(3<5.0)
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor<valorDer.valor };
-                    case TIPO_DATO.CARACTER:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
-                    case TIPO_DATO.CADENA:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
                     case TIPO_DATO.BANDERA:
                         //if(3<true || 3 <false)
                         if (valorDer.valor == true){
@@ -479,8 +534,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor<0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.DECIMAL:
                 switch(valorDer.tipo){
                     case TIPO_DATO.ENTERO:
@@ -489,12 +546,6 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                     case TIPO_DATO.DECIMAL:
                         //if(3.0<5.0)
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor<valorDer.valor };
-                    case TIPO_DATO.CARACTER:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
-                    case TIPO_DATO.CADENA:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
                     case TIPO_DATO.BANDERA:
                         //if(3.0<true || 3.0 <false)
                         if (valorDer.valor == true){
@@ -502,16 +553,12 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor<0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.CARACTER:
                 switch(valorDer.tipo){
-                    case TIPO_DATO.ENTERO:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
-                    case TIPO_DATO.DECIMAL:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
-                        return undefined;
                     case TIPO_DATO.CARACTER:
                         //if('A'<'B')
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor.charCodeAt()<valorDer.valor.charCodeAt };
@@ -529,8 +576,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor.charCodeAt()<0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.CADENA:
                 let palabraizq = 0
                 for (let index = 0; index < valorIzq.valor.length; index++) {
@@ -560,8 +609,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: palabraizq<0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.BANDERA:
                 if (valorIzq.valor == true){
                     switch(valorDer.tipo){
@@ -588,8 +639,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                             }else{
                                 return { tipo:TIPO_DATO.BANDERA, valor: 1<0 };
                             }
+                        default:
+                            console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                            return undefined;
                     }
-                    break;
                 }else{
                     switch(valorDer.tipo){
                         case TIPO_DATO.ENTERO:
@@ -615,9 +668,14 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                             }else{
                                 return { tipo:TIPO_DATO.BANDERA, valor: 0<0 };
                             }
+                        default:
+                            console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                            return undefined;
                     }
-                    break;
-                }    
+                }
+            default:
+                console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                return undefined;    
         }
     }
     else if(expresion.tipo == TIPO_OPERACION.MAYOR){
@@ -632,12 +690,6 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                     case TIPO_DATO.DECIMAL:
                         //if(3>5.0)
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor>valorDer.valor };
-                    case TIPO_DATO.CARACTER:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
-                    case TIPO_DATO.CADENA:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
                     case TIPO_DATO.BANDERA:
                         //if(3>true || 3 >false)
                         if (valorDer.valor == true){
@@ -645,8 +697,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor>0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.DECIMAL:
                 switch(valorDer.tipo){
                     case TIPO_DATO.ENTERO:
@@ -655,12 +709,6 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                     case TIPO_DATO.DECIMAL:
                         //if(3.0>5.0)
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor>valorDer.valor };
-                    case TIPO_DATO.CARACTER:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
-                    case TIPO_DATO.CADENA:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
                     case TIPO_DATO.BANDERA:
                         //if(3.0>true || 3.0 >false)
                         if (valorDer.valor == true){
@@ -668,16 +716,12 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor>0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.CARACTER:
                 switch(valorDer.tipo){
-                    case TIPO_DATO.ENTERO:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
-                    case TIPO_DATO.DECIMAL:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
                     case TIPO_DATO.CARACTER:
                         //if('A'>'B')
                         return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor.charCodeAt()>valorDer.valor.charCodeAt };
@@ -695,20 +739,16 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor.charCodeAt()>0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.CADENA:
                 let palabraizq = 0
                 for (let index = 0; index < valorIzq.valor.length; index++) {
                     palabraizq+=valorIzq.valor.charCodeAt(index)
                 }
                 switch(valorDer.tipo){
-                    case TIPO_DATO.ENTERO:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
-                    case TIPO_DATO.DECIMAL:
-                        console.log('Error semantico los tipos no se pueden operar en el caso del mayor');
-                        return undefined;
                     case TIPO_DATO.CARACTER:
                         //if("A">'B')
                         return { tipo:TIPO_DATO.BANDERA, valor: palabraizq>valorIzq.valor.charCodeAt() };
@@ -726,8 +766,10 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                         }else{
                             return { tipo:TIPO_DATO.BANDERA, valor: palabraizq>0 };
                         }
+                    default:
+                        console.log('Error semantico los tipos no se pueden operar en el caso del menor');
+                        return undefined;
                 }
-                break;
             case TIPO_DATO.BANDERA:
                 if (valorIzq.valor == true){
                     switch(valorDer.tipo){
@@ -1328,26 +1370,25 @@ function procesarexpresion(expresion, tsglobal, tslocal){
             case TIPO_DATO.BANDERA:
                 switch(valorDer.tipo){
                     case TIPO_DATO.BANDERA:
-                        if((valorIzq.valor == true) && (valorDer == true)){
+                        if((valorIzq.valor == true) && (valorDer.valor == true)){
                             return { tipo:TIPO_DATO.BANDERA, valor: true };
                         }
-                        else if((valorIzq.valor == true) && (valorDer == false)){
+                        else if((valorIzq.valor == true) && (valorDer.valor == false)){
                             return { tipo:TIPO_DATO.BANDERA, valor: true };
                         }
-                        else if((valorIzq.valor == false) && (valorDer == true)){
+                        else if((valorIzq.valor == false) && (valorDer.valor == true)){
                             return { tipo:TIPO_DATO.BANDERA, valor: true };
                         }
-                        else if((valorIzq.valor == false) && (valorDer == false)){
+                        else if((valorIzq.valor == false) && (valorDer.valor == false)){
                             return { tipo:TIPO_DATO.BANDERA, valor: false };
                         }
                     default:
                         console.log("Tipo De Dato Invalido Para Comparacion OR, Operador Derecho")
-                    break;
+                    return undefined;
                 }
-            break;
             default:
                 console.log("Tipo De Dato Invalido Para Comparacion OR, Operador Izquierdo")
-            break;
+                return undefined;
         }
     }
     else if(expresion.tipo == TIPO_OPERACION.AND){
@@ -1357,62 +1398,32 @@ function procesarexpresion(expresion, tsglobal, tslocal){
             case TIPO_DATO.BANDERA:
                 switch(valorDer.tipo){
                     case TIPO_DATO.BANDERA:
-                        if((valorIzq.valor == true) && (valorDer == true)){
+                        if((valorIzq.valor == true) && (valorDer.valor == true)){
                             return { tipo:TIPO_DATO.BANDERA, valor: true };
                         }
-                        else if((valorIzq.valor == true) && (valorDer == false)){
+                        else if((valorIzq.valor == true) && (valorDer.valor == false)){
                             return { tipo:TIPO_DATO.BANDERA, valor: false };
                         }
-                        else if((valorIzq.valor == false) && (valorDer == true)){
+                        else if((valorIzq.valor == false) && (valorDer.valor == true)){
                             return { tipo:TIPO_DATO.BANDERA, valor: false };
                         }
-                        else if((valorIzq.valor == false) && (valorDer == false)){
+                        else if((valorIzq.valor == false) && (valorDer.valor == false)){
                             return { tipo:TIPO_DATO.BANDERA, valor: false };
                         }
                     default:
                         console.log("Tipo De Dato Invalido Para Comparacion AND, Operador Derecho")
-                    break;
+                    return undefined;
                 }
-            break;
             default:
                 console.log("Tipo De Dato Invalido Para Comparacion AND, Operador Izquierdo")
-            break;
-        }
-    }
-    else if(expresion.tipo == TIPO_OPERACION.XOR){
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal);
-        var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal);
-        switch(valorIzq.tipo){
-            case TIPO_DATO.BANDERA:
-                switch(valorDer.tipo){
-                    case TIPO_DATO.BANDERA:
-                        if((valorIzq.valor == true) && (valorDer == true)){
-                            return { tipo:TIPO_DATO.BANDERA, valor: false };
-                        }
-                        else if((valorIzq.valor == true) && (valorDer == false)){
-                            return { tipo:TIPO_DATO.BANDERA, valor: true };
-                        }
-                        else if((valorIzq.valor == false) && (valorDer == true)){
-                            return { tipo:TIPO_DATO.BANDERA, valor: true };
-                        }
-                        else if((valorIzq.valor == false) && (valorDer == false)){
-                            return { tipo:TIPO_DATO.BANDERA, valor: false };
-                        }
-                    default:
-                        console.log("Tipo De Dato Invalido Para Comparacion XOR, Operador Derecho")
-                    break;
-                }
-            break;
-            default:
-                console.log("Tipo De Dato Invalido Para Comparacion XOR, Operador Izquierdo")
-            break;
+                return undefined;
         }
     }
     else if(expresion.tipo == TIPO_OPERACION.NOT){
         var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal);
         switch(valorIzq.tipo){
             case TIPO_DATO.BANDERA:
-                if (valorIzq.valor == True){
+                if (valorIzq.valor == true){
                     return { tipo:TIPO_DATO.BANDERA, valor: false };
                 }
                 else{
@@ -1420,7 +1431,7 @@ function procesarexpresion(expresion, tsglobal, tslocal){
                 }
             default:
                 console.log("Tipo De Dato Invalido Para Comparacion NOT")
-            break;
+                return undefined;;
         }
     }
     else if(expresion.tipo == TIPO_OPERACION.CASTEO){
@@ -1429,86 +1440,53 @@ function procesarexpresion(expresion, tsglobal, tslocal){
         switch(valorIzq.tipo){
             case TIPO_VALOR.ENTERO:
                 switch(valorDer.tipo){
-                    case TIPO_VALOR.ENTERO:
-                        return { tipo:TIPO_DATO.ENTERO, valor: valorDer.valor };
-                    
                     case TIPO_VALOR.DECIMAL:
                         return { tipo:TIPO_DATO.ENTERO, valor: Math.trunc(valorDer.valor) };
     
                     case TIPO_VALOR.CARACTER:
-                        return { tipo:TIPO_DATO.ENTERO, valor: Number(valorDer.valor) };
-    
-                    case TIPO_VALOR.CADENA:
-                        return { tipo:TIPO_DATO.ENTERO, valor: Number(valorDer.valor) };
-    
-                    default:
-                        console.log('Error Semantico');
-                    break;
-                }
+                        return { tipo:TIPO_DATO.ENTERO, valor: valorDer.valor.charCodeAt() };
 
-            break;
+                    default:
+                        console.log('Casteo Explicito Invalido');
+                        return undefined;;
+                }
             
             case TIPO_VALOR.DECIMAL:
                 switch(valorDer.tipo){
                     case TIPO_VALOR.ENTERO:
                         return { tipo:TIPO_DATO.DECIMAL, valor: valorDer.valor };
                     
-                    case TIPO_VALOR.DECIMAL:
-                        return { tipo:TIPO_DATO.DECIMAL, valor: valorDer.valor };
-    
-                    case TIPO_VALOR.CADENA:
-                        return { tipo:TIPO_DATO.DECIMAL, valor: Number(valorDer.valor) };
+                    case TIPO_VALOR.CARACTER:
+                        return { tipo:TIPO_DATO.DECIMAL, valor: valorDer.valor.charCodeAt() };
     
                     default:
-                        console.log('Error Semantico');
-                    break;
+                        console.log('Casteo Explicito Invalido');
+                        return undefined;;
                 }
-
-            break;
 
             case TIPO_VALOR.CARACTER:
                 switch(valorDer.tipo){
                     case TIPO_VALOR.ENTERO:
-                        return { tipo:TIPO_DATO.CARACTER, valor: valorDer.valor.toString() };
-                    
-                    case TIPO_VALOR.DECIMAL:
-                        return { tipo:TIPO_DATO.CARACTER, valor: valorDer.valor.toString() };
-    
-                    case TIPO_VALOR.CARACTER:
-                        return { tipo:TIPO_DATO.CARACTER, valor: valorDer.valor };
+                        return { tipo:TIPO_DATO.CARACTER, valor: String.fromCharCode(valorDer.valor) };
 
                     default:
-                        console.log('Error Semantico');
-                    break;
+                        console.log('Casteo Explicito Invalido');
+                        return undefined;;
                 }
-
-            break;
 
             case TIPO_VALOR.CADENA:
                 switch(valorDer.tipo){
 
-                    case TIPO_VALOR.CADENA:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor };
+                    case TIPO_VALOR.ENTERO:
+                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
+
+                    case TIPO_VALOR.DECIMAL:
+                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
     
                     default:
-                        console.log('Error Semantico');
-                    break;
+                        console.log('Casteo Explicito Invalido');
+                        return undefined;;
                 }
-
-            break;
-
-            case TIPO_VALOR.BANDERA:
-                switch(valorDer.tipo){
-
-                    case TIPO_VALOR.BANDERA:
-                        return { tipo:TIPO_DATO.BANDERA, valor: valorDer.valor };
-
-                    default:
-                        console.log('Error Semantico');
-                    break;
-                }
-
-            break;
         }
     }
     else if(expresion.tipo == TIPO_VALOR.ENTERO){

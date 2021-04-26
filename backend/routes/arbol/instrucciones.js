@@ -23,7 +23,6 @@ const TIPO_OPERACION = {
     NOIGUAL:            'OP_NOIGUAL',
     OR:                 'OP_OR',
     AND:                'OP_AND',
-    XOR:                'OP_XOR',
     NOT:                'OP_NOT',
     CASTEO:             'OP_CASTEO'
 }

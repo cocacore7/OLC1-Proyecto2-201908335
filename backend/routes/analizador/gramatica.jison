@@ -44,7 +44,6 @@
 "="                     return 'igual';
 "||"                    return 'or';
 "&&"                    return 'and';
-"!="                    return 'xor';
 "!"                     return 'not';
 
 /* Sentencias de Control */
@@ -81,11 +80,11 @@
 "exec"                      return 'exec';
 
 /* Tipos Valores */
-[0-9]+("."[0-9]+)?\b        return 'decimall';
-[0-9]+\b                    return 'enteroo';
-\'[^\"]\'                   { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
+([0-9])+(["."])([0-9])+     return 'decimall';
+[0-9]+                      return 'enteroo';
 ([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
 \"[^\"]*\"                  { yytext = yytext.substr(1, yyleng-2); return 'cadenaa'; }
+\'[^\"]\'                   { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
 
 <<EOF>>                 return 'EOF';
 
@@ -102,14 +101,14 @@
 
 // Precedencia de operadores
 
-%left 'or'
-%left 'and' 'xor'
+%left  'or'
+%left  'and'
 %rigth 'not'
-%left 'menor' 'menorigual' 'mayor' 'mayorigual' 'igualigual' 'noigual'
-%left 'mas' 'menos'
-%left 'por' 'dividido' 'modulo'
-%left 'potencia'
-%left UMENOS
+%left  'menor' 'menorigual' 'mayor' 'mayorigual' 'igualigual' 'noigual'
+%left  'mas' 'menos'
+%left  'por' 'dividido' 'modulo'
+%left  'potencia'
+%left  UMENOS
 
 
 %start INICIO
@@ -148,14 +147,21 @@ METODO
     : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec {$$=INSTRUCCIONES.nuevoMetodo($2, [], $6)};
 
 ASIGNACION
-    : identificador igual EXP pcoma { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } ;
+    : identificador igual EXP pcoma { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
+    | identificador igual CASTEO pcoma { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); };
 
 DECLARACION
     : TIPO identificador igual EXP pcoma    { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
-    | TIPO identificador pcoma              { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); };
+    | TIPO identificador pcoma              { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); }
+    | TIPO identificador igual CASTEO pcoma { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); };
 
 IMPRIMIR
-    : imprimir parentesisa EXP parentesisc pcoma { $$=INSTRUCCIONES.nuevoImprimir($3); };
+    : imprimir parentesisa EXP parentesisc pcoma    { $$=INSTRUCCIONES.nuevoImprimir($3); }
+    | imprimir parentesisa parentesisc pcoma        { $$=INSTRUCCIONES.nuevoImprimir("\n"); }
+    | imprimir parentesisa CASTEO parentesisc pcoma { $$=INSTRUCCIONES.nuevoImprimir($3); };
+
+CASTEO
+    : parentesisa TIPO parentesisc EXP { $$=INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, INSTRUCCIONES.nuevoValor($2,0), $4); };
 
 WHILEE
     : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec{ $$=INSTRUCCIONES.nuevoWhile($3, $6); };
@@ -165,11 +171,11 @@ SI
     |si parentesisa EXP parentesisc llavea CUERPO2 llavec                               { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); };
 
 TIPO
-    : entero                            { $$ = TIPO_DATO.ENTERO; }
-    | decimal                           { $$ = TIPO_DATO.DECIMAL; }
-    | caracter                          { $$ = TIPO_DATO.CARACTER; }
-    | cadena                            { $$ = TIPO_DATO.CADENA; }
-    | bandera                           { $$ = TIPO_DATO.BANDERA; };
+    : entero                                            { $$ = TIPO_DATO.ENTERO; }
+    | decimal                                           { $$ = TIPO_DATO.DECIMAL; }
+    | caracter                                          { $$ = TIPO_DATO.CARACTER; }
+    | cadena                                            { $$ = TIPO_DATO.CADENA; }
+    | bandera                                           { $$ = TIPO_DATO.BANDERA; };
 
 EXP
     : EXP mas EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.SUMA, $1, $3); }
@@ -187,9 +193,7 @@ EXP
     | EXP noigual EXP                                   { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.NOIGUAL, $1, $3); }
     | EXP or EXP                                        { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.OR, $1, $3); }
     | EXP and EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.AND, $1, $3); }
-    | EXP xor EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.XOR, $1, $3); }
     | not EXP %prec UMENOS                              { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.NOT, $2); }
-    | parentesisa TIPO parentesisc EXP %prec UMENOS     { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, $2, $4); }
     | parentesisa EXP parentesisc                       { $$ = $2 }
     | enteroo                                           { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.ENTERO, Number($1)); }
     | decimall                                          { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.DECIMAL, Number($1)); }

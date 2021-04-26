@@ -25,14 +25,110 @@ class TS {
         if(simbolo){
             //Manejan si no existe variable
             console.log('La variable ya existe');
+            return undefined
         }
         else{
             if (tipo == valor.tipo){
                 //Si hay casteos implicitos aca los verifican
                 this._simbolos.push(crearSimbolo(tipo, id, valor.valor));
+                return ""
             }else{
                 //Manejan si el casteo no existe
-                console.log('Error Semantico');
+                switch(tipo){
+                    case TIPO_VALOR.ENTERO:
+                        switch(valor.tipo){
+                            
+                            case TIPO_VALOR.DECIMAL:
+                                valor.valor==Math.trunc(valor.valor);
+                                return "";
+
+                            case TIPO_VALOR.BANDERA:
+                                if(valor.valor==true){
+                                    valor.valor=1;
+                                }
+                                else if (valor.valor==false){
+                                    valor.valor=0;
+                                }
+                                return "";
+
+                            default:
+                                console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                return undefined;
+                        }
+                    
+                    case TIPO_VALOR.DECIMAL:
+                        switch(valor.tipo){
+                            case TIPO_VALOR.ENTERO:
+                                valor.tipo==valor.valor;
+                                return "";
+            
+                            case TIPO_VALOR.BANDERA:
+                                if(valor.valor==true){
+                                    valor.valor=1;
+                                }
+                                else if (valor.valor==false){
+                                    valor.valor=0;
+                                }
+                                return "";
+
+                            default:
+                                console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                return undefined;
+                        }
+    
+                    case TIPO_VALOR.CARACTER:
+                        switch(valor.tipo){
+                            
+                            case TIPO_VALOR.CADENA:
+                                valor.valor=valor.valor;
+                                return "";
+            
+                            default:
+                                console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                return undefined;
+                        }
+    
+                    case TIPO_VALOR.CADENA:
+                        switch(valor.tipo){
+                            
+                            case TIPO_VALOR.CARACTER:
+                                valor.valor=valor.valor;
+                                return "";
+            
+                            default:
+                                console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                return undefined;
+                        }
+    
+                    case TIPO_VALOR.BANDERA:
+                        switch(valor.tipo){
+                            case TIPO_VALOR.ENTERO:
+                                if (valor.valor == 1){
+                                    valor.valor = true;
+                                }else if (valor.valor == 0){
+                                    valor.valor = false;
+                                }else{
+                                    console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                    return undefined;
+                                }
+                                return "";
+                            
+                            case TIPO_VALOR.DECIMAL:
+                                if (valor.valor == 1){
+                                    valor.valor = true;
+                                }else if (valor.valor == 0){
+                                    valor.valor = false;
+                                }else{
+                                    console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                    return undefined;
+                                }
+                                return "";
+
+                            default:
+                                console.log('No se pudo castear implicitamente por tipos incompatibles');
+                                return undefined;
+                        }
+                }
             }
         }
     }
@@ -52,6 +148,7 @@ class TS {
         if(simbolo){
             if(simbolo.tipo == valor.tipo){
                 simbolo.valor=valor.valor;
+                return ""
             }
             else{
                 // a=3; donde a es un decimal EN ESTA PARTE VERIFICAN LOS POSIBLES CASTEOS
@@ -61,7 +158,7 @@ class TS {
                             
                             case TIPO_VALOR.DECIMAL:
                                 simbolo.valor==Math.trunc(valor.valor);
-                            break;
+                                return "";
 
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
@@ -70,20 +167,18 @@ class TS {
                                 else if (valor.valor==false){
                                     simbolo.valor=0;
                                 }
-                            break;
+                                return "";
 
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                                return undefined;
                         }
-    
-                    break;
                     
                     case TIPO_VALOR.DECIMAL:
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
                                 simbolo.tipo==valor.valor;
-                            break;
+                                return "";
             
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
@@ -92,42 +187,36 @@ class TS {
                                 else if (valor.valor==false){
                                     simbolo.valor=0;
                                 }
-                            break;
+                                return "";
 
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                                return undefined;
                         }
-    
-                    break;
     
                     case TIPO_VALOR.CARACTER:
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.CADENA:
                                 simbolo.valor=valor.valor;
-                            break;
+                                return "";
             
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                                return undefined;
                         }
-    
-                    break;
     
                     case TIPO_VALOR.CADENA:
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.CARACTER:
                                 simbolo.valor=valor.valor;
-                            break;
+                                return "";
             
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                                return undefined;
                         }
-    
-                    break;
     
                     case TIPO_VALOR.BANDERA:
                         switch(valor.tipo){
@@ -138,9 +227,9 @@ class TS {
                                     simbolo.valor = false;
                                 }else{
                                     console.log('No se pudo actualizar por tipos incompatibles');
-                                    return;
+                                    return undefined;
                                 }
-                            break;
+                                return "";
                             
                             case TIPO_VALOR.DECIMAL:
                                 if (valor.valor == 1){
@@ -149,20 +238,14 @@ class TS {
                                     simbolo.valor = false;
                                 }else{
                                     console.log('No se pudo actualizar por tipos incompatibles');
-                                    return;
+                                    return undefined;
                                 }
-                            break;
-            
-                            case TIPO_VALOR.CARACTER:
+                                return "";
+
+                            default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
-            
-                            case TIPO_VALOR.CADENA:
-                                console.log('No se pudo actualizar por tipos incompatibles');
-                                return;
+                                return undefined;
                         }
-    
-                    break;
                 }
             }
         }
