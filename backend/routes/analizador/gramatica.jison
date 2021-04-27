@@ -243,9 +243,9 @@ TIPO
 
 EXP
     : EXP mas EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.SUMA, $1, $3); }
-    | EXP incremento                                    { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.INCREMENTO, $1); }
     | EXP menos EXP                                     { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.RESTA, $1, $3); }
-    | EXP decremento                                    { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.DECREMENTO, $1); }
+    | identificador incremento                          { $$ = INSTRUCCIONES.nuevaAsignacion($1, TIPO_VALOR.INCREMENTO); }
+    | identificador decremento                          { $$ = INSTRUCCIONES.nuevaAsignacion($1, TIPO_VALOR.DECREMENTO); }
     | EXP por EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.MULTIPLICACION, $1, $3); }
     | EXP dividido EXP                                  { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.DIVISION, $1, $3); }
     | EXP potencia EXP                                  { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.POTENCIA, $1, $3); }

@@ -1802,6 +1802,16 @@ function procesarexpresion(expresion, tsglobal, tslocal,metodos){
             }
         }
     }
+    else if(expresion.expresion == TIPO_VALOR.INCREMENTO){
+        var valor = { tipo:TIPO_DATO.INCREMENTO, valor: 1}
+        valor = tslocal.actualizar(expresion.identificador, valor,metodos);
+        return valor
+    }
+    else if(expresion.expresion == TIPO_VALOR.DECREMENTO){
+        var valor = { tipo:TIPO_DATO.DECREMENTO, valor: 1}
+        valor = tslocal.actualizar(expresion.identificador, valor,metodos);
+        return valor
+    }
     else if(expresion == TIPO_VALOR.INCREMENTO){
         return { tipo:TIPO_DATO.INCREMENTO, valor: 1}
     }

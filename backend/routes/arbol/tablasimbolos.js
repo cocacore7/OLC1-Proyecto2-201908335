@@ -166,11 +166,11 @@ class TS {
 
                             case TIPO_VALOR.INCREMENTO:
                                 simbolo.valor++;
-                                return "";
+                                return simbolo;
 
                             case TIPO_VALOR.DECREMENTO:
                                 simbolo.valor--;
-                                return "";
+                                return simbolo;
 
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
@@ -194,11 +194,11 @@ class TS {
                             
                             case TIPO_VALOR.INCREMENTO:
                                 simbolo.valor == simbolo.valor + 1;
-                                return "";
+                                return simbolo;
 
                             case TIPO_VALOR.DECREMENTO:
                                 simbolo.valor--;
-                                return "";
+                                return simbolo;
             
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
