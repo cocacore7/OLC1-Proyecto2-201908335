@@ -23,12 +23,15 @@
 
 /* Signos */
 ";"                     return 'pcoma';
+","                     return 'coma';
 "{"                     return 'llavea';
 "}"                     return 'llavec';
 "("                     return 'parentesisa';
 ")"                     return 'parentesisc';
 "?"                     return 'signointerrogacion';
 ":"                     return 'dospuntos';
+"++"                    return 'incremento';
+"--"                    return 'decremento';
 "-"                     return 'menos';
 "+"                     return 'mas';
 "*"                     return 'por';
@@ -45,8 +48,6 @@
 "||"                    return 'or';
 "&&"                    return 'and';
 "!"                     return 'not';
-"++"                    return 'incremento';
-"--"                    return 'decremento';
 
 /* Sentencias de Control */
 "if"                    return 'si';
@@ -61,8 +62,8 @@
 "for"                   return 'for';
 
 /* Sentencias de Transferencias */
-"break"                 return 'break';
-"continue"              return 'continue';
+"break"                 return 'breakk';
+"continue"              return 'continuee';
 "return"                return 'return';
 
 /* Funciones */
@@ -86,7 +87,7 @@
 [0-9]+                      return 'enteroo';
 ([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
 \"[^\"]*\"                  { yytext = yytext.substr(1, yyleng-2); return 'cadenaa'; }
-\'[^\"]\'                   { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
+\'[^\']*\'                   { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
 
 <<EOF>>                 return 'EOF';
 
@@ -107,7 +108,7 @@
 %left  'and'
 %rigth 'not'
 %left  'menor' 'menorigual' 'mayor' 'mayorigual' 'igualigual' 'noigual'
-%left  'mas' 'menos'
+%left  'incremento' 'decremento' 'mas' 'menos' 
 %left  'por' 'dividido' 'modulo'
 %left  'potencia'
 %left  UMENOS
@@ -133,55 +134,105 @@ CUERPO
 CUERPO2
     : CUERPO2 DECLARACION   { $1.push($2); $$=$1; }
     | CUERPO2 ASIGNACION    { $1.push($2); $$=$1; }
+    | CUERPO2 LLAMADA       { $1.push($2); $$=$1; }
     | CUERPO2 IMPRIMIR      { $1.push($2); $$=$1; }
     | CUERPO2 SI            { $1.push($2); $$=$1; }
     | CUERPO2 WHILEE        { $1.push($2); $$=$1; }
     | CUERPO2 DOWHILEE      { $1.push($2); $$=$1; }
+    | CUERPO2 BREAKK        { $1.push($2); $$=$1; }
+    | CUERPO2 CONTINUEE     { $1.push($2); $$=$1; }
     | IMPRIMIR              { $$ = [$1]; }
     | DECLARACION           { $$ = [$1]; }
-    | ASIGNACION            { $$=[$1]; }
-    | SI                    { $$=[$1]; }
-    | WHILEE                { $$=[$1]; }
-    | DOWHILEE              { $$=[$1]; };
+    | ASIGNACION            { $$ = [$1]; }
+    | LLAMADA               { $$ = [$1]; }
+    | SI                    { $$ = [$1]; }
+    | WHILEE                { $$ = [$1]; }
+    | DOWHILEE              { $$ = [$1]; }
+    | BREAKK                { $$ = [$1]; }
+    | CONTINUEE             { $$ = [$1]; };
 
 MAIN
-    :exec identificador parentesisa parentesisc pcoma {$$=INSTRUCCIONES.nuevoMain($2, []);};
+    : exec identificador parentesisa parentesisc pcoma                              {$$=INSTRUCCIONES.nuevoMain($2, []);}
+    | exec identificador parentesisa VALORESLLAMADA parentesisc pcoma               {$$=INSTRUCCIONES.nuevoMain($2, $4);};
 
 METODO
-    : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec {$$=INSTRUCCIONES.nuevoMetodo($2, [], $6)};
+    : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec             { $$ = INSTRUCCIONES.nuevoMetodo($2, [], $6) }
+    | vacio identificador parentesisa PARAMETROS parentesisc llavea CUERPO2 llavec  { $$ = INSTRUCCIONES.nuevoMetodo($2, $4, $7) };
+
+PARAMETROS
+    : PARAMETROS coma TIPO identificador                                            { $1.push(INSTRUCCIONES.nuevoParametro($3,$4)); $$=$1;}
+    | TIPO identificador                                                            { $$=[INSTRUCCIONES.nuevoParametro($1, $2)]; };
+
+LLAMADA
+    : identificador parentesisa VALORESLLAMADA parentesisc pcoma                    {$$=INSTRUCCIONES.nuevaLlamada($1, $3);}
+    | identificador parentesisa parentesisc pcoma                                   {$$=INSTRUCCIONES.nuevaLlamada($1, []);};
+
+VALORESLLAMADA
+    : VALORESLLAMADA coma EXP                                                       {$1.push($3); $$=$1;}
+    | VALORESLLAMADA coma CASTEO                                                    {$1.push($3); $$=$1;}
+    | VALORESLLAMADA coma TERNARIO                                                  {$1.push($3); $$=$1;}
+    | EXP                                                                           {$$=[$1];}
+    | CASTEO                                                                        {$$=[$1];}
+    | TERNARIO                                                                      {$$=[$1];};
 
 DECLARACION
-    : TIPO identificador igual EXP pcoma    { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
-    | TIPO identificador pcoma              { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); }
-    | TIPO identificador igual CASTEO pcoma { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); };
+    : TIPO identificador igual EXP pcoma                                            { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
+    | TIPO identificador pcoma                                                      { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); }
+    | TIPO identificador igual CASTEO pcoma                                         { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
+    | TIPO identificador igual TERNARIO pcoma                                       { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); };
 
 ASIGNACION
-    : identificador igual EXP pcoma     { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
-    | identificador igual CASTEO pcoma  { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); };
+    : identificador igual EXP pcoma                                                 { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
+    | identificador igual CASTEO pcoma                                              { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); }
+    | identificador igual TERNARIO pcoma                                            { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); }
+    | identificador incremento pcoma                                                { $$ = INSTRUCCIONES.nuevaAsignacion($1, TIPO_VALOR.INCREMENTO); }
+    | identificador decremento pcoma                                                { $$ = INSTRUCCIONES.nuevaAsignacion($1, TIPO_VALOR.DECREMENTO); };
 
 
 IMPRIMIR
-    : imprimir parentesisa EXP parentesisc pcoma    { $$=INSTRUCCIONES.nuevoImprimir($3); }
-    | imprimir parentesisa parentesisc pcoma        { $$=INSTRUCCIONES.nuevoImprimir("\n"); }
-    | imprimir parentesisa CASTEO parentesisc pcoma { $$=INSTRUCCIONES.nuevoImprimir($3); };
+    : imprimir parentesisa EXP parentesisc pcoma                                    { $$=INSTRUCCIONES.nuevoImprimir($3); }
+    | imprimir parentesisa parentesisc pcoma                                        { $$=INSTRUCCIONES.nuevoImprimir("\n"); }
+    | imprimir parentesisa CASTEO parentesisc pcoma                                 { $$=INSTRUCCIONES.nuevoImprimir($3); }
+    | imprimir parentesisa TERNARIO parentesisc pcoma                               { $$=INSTRUCCIONES.nuevoImprimir($3); };
 
 WHILEE
-    : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec        { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
-    | mientras parentesisa CASTEO parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoWhile($3, $6); };
+    : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec                    { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
+    | mientras parentesisa CASTEO parentesisc llavea CUERPO2 llavec                 { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
+    | mientras parentesisa TERNARIO parentesisc llavea CUERPO2 llavec               { $$=INSTRUCCIONES.nuevoWhile($3, $6); };
 
 DOWHILEE
-    : do llavea CUERPO2 llavec mientras parentesisa EXP parentesisc pcoma       { $$=INSTRUCCIONES.nuevoDoWhile($7, $3); }
-    | do llavea CUERPO2 llavec mientras parentesisa CASTEO parentesisc pcoma    { $$=INSTRUCCIONES.nuevoDoWhile($7, $3); };
+    : do llavea CUERPO2 llavec mientras parentesisa EXP parentesisc pcoma           { $$=INSTRUCCIONES.nuevoDoWhile($3, $7); }
+    | do llavea CUERPO2 llavec mientras parentesisa CASTEO parentesisc pcoma        { $$=INSTRUCCIONES.nuevoDoWhile($3, $7); }
+    | do llavea CUERPO2 llavec mientras parentesisa TERNARIO parentesisc pcoma      { $$=INSTRUCCIONES.nuevoDoWhile($3, $7); };
 
 FOR
     : for parentesisa DECLARACION pcoma EXP pcoma EXP parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoFor($3, $5,$7,$10); };
 
 SI
-    :si parentesisa EXP parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec    { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
-    |si parentesisa EXP parentesisc llavea CUERPO2 llavec                               { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); };
+    :si parentesisa EXP parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec        { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa EXP parentesisc llavea CUERPO2 llavec                                   { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa EXP parentesisc llavea CUERPO2 llavec sino SI                           { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec                                { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino SI                        { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec   { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec                              { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino SI                      { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); };
+
+BREAKK
+    : breakk pcoma { $$ = INSTRUCCIONES.nuevoBreak(); };
+
+CONTINUEE
+    : continuee pcoma { $$ = INSTRUCCIONES.nuevoContinue(); };
 
 CASTEO
     : parentesisa TIPO parentesisc EXP { $$=INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, INSTRUCCIONES.nuevoValor($2,0), $4); };
+
+TERNARIO
+    : EXP signointerrogacion EXP dospuntos EXP          { $$ = INSTRUCCIONES.nuevoTernario(TIPO_OPERACION.TERNARIO, $1, $3, $5); }
+    | EXP signointerrogacion CASTEO dospuntos CASTEO    { $$ = INSTRUCCIONES.nuevoTernario(TIPO_OPERACION.TERNARIO, $1, $3, $5); }
+    | EXP signointerrogacion EXP dospuntos CASTEO       { $$ = INSTRUCCIONES.nuevoTernario(TIPO_OPERACION.TERNARIO, $1, $3, $5); }
+    | EXP signointerrogacion CASTEO dospuntos EXP       { $$ = INSTRUCCIONES.nuevoTernario(TIPO_OPERACION.TERNARIO, $1, $3, $5); };
 
 TIPO
     : entero                                            { $$ = TIPO_DATO.ENTERO; }
@@ -192,7 +243,9 @@ TIPO
 
 EXP
     : EXP mas EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.SUMA, $1, $3); }
+    | EXP incremento                                    { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.INCREMENTO, $1); }
     | EXP menos EXP                                     { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.RESTA, $1, $3); }
+    | EXP decremento                                    { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.DECREMENTO, $1); }
     | EXP por EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.MULTIPLICACION, $1, $3); }
     | EXP dividido EXP                                  { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.DIVISION, $1, $3); }
     | EXP potencia EXP                                  { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.POTENCIA, $1, $3); }

@@ -4,12 +4,16 @@ const TIPO_VALOR = {
     CADENA:             'VAL_CADENA',
     CARACTER:           'VAL_CARACTER',
     BANDERA:            'VAL_BANDERA',
+    INCREMENTO:         'VAL_INCREMENTO',
+    DECREMENTO:         'VAL_DECREMENTO',
     IDENTIFICADOR:      'VAL_IDENTIFICADOR'
 }
 
 const TIPO_OPERACION = {
     SUMA:               'OP_SUMA',
+    INCREMENTO:         'OP_INCREMENTO',
     RESTA:              'OP_RESTA',
+    DECREMENTO:         'OP_DECREMENTO',
     MULTIPLICACION:     'OP_MULTIPLICACION',
     DIVISION:           'OP_DIVISION',
     POTENCIA:           'OP_POTENCIA',
@@ -24,12 +28,14 @@ const TIPO_OPERACION = {
     OR:                 'OP_OR',
     AND:                'OP_AND',
     NOT:                'OP_NOT',
-    CASTEO:             'OP_CASTEO'
+    CASTEO:             'OP_CASTEO',
+    TERNARIO:           'INSTR_TERNARIO'
 }
 
 const TIPO_INSTRUCCION = {
     MAIN:               'INSTR_MAIN',
     METODO:             'INSTR_METODO',
+    LLAMADA:            'INSTR_LLAMADA',
     DECLARACION:        'INSTR_DECLARACION',
     ASIGNACION:         'INSTR_ASIGNACION',
     IMPRIMIR:           'INSTR_IMPRIMIR',
@@ -37,7 +43,10 @@ const TIPO_INSTRUCCION = {
     DOWHILEE:           'INSTR_DOWHILE',
     FORR:               'INSTR_FOR',
     IFF:                'INSTR_IF',
-    SWITCHH:            'INSTR_SWITCH'
+    SWITCHH:            'INSTR_SWITCH',
+    BREAK:              'INSTR_BREAK',
+    CONTINUE:           'INSTR_CONTINUE',
+    ERRORR:              'INSTR_ERROR'
 }
 
 const INSTRUCCIONES = {
@@ -74,6 +83,19 @@ const INSTRUCCIONES = {
             identificador: identificador,
             parametros: parametros,
             instrucciones: instrucciones
+        }
+    },
+    nuevaLlamada: function(identificador, parametros){
+        return{
+            tipo: TIPO_INSTRUCCION.LLAMADA,
+            identificador: identificador,
+            parametros: parametros
+        }
+    },
+    nuevoParametro: function(tipo, identificador){
+        return{
+            tipo: tipo,
+            identificador: identificador
         }
     },
     nuevaDeclaracion: function(tipo, id, expresion){
@@ -134,6 +156,24 @@ const INSTRUCCIONES = {
             condicion: condicion,
             casos: casos,
             definido: definido
+        }
+    },
+    nuevoBreak: function(){
+        return{
+            tipo: TIPO_INSTRUCCION.BREAK
+        }
+    },
+    nuevoContinue: function(){
+        return{
+            tipo: TIPO_INSTRUCCION.CONTINUE
+        }
+    },
+    nuevoTernario: function(tipo, condicion, valverdadero, valfalso){
+        return{
+            tipo: tipo,
+            condicion: condicion,
+            valverdadero: valverdadero,
+            valfalso: valfalso
         }
     }
 }

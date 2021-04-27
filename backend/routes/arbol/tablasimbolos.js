@@ -5,6 +5,8 @@ const TIPO_DATO = {
     DECIMAL:        'VAL_DECIMAL',
     CARACTER:       'VAL_CARACTER',
     CADENA:         'VAL_CADENA',
+    INCREMENTO:     'VAL_INCREMENTO',
+    DECREMENTO:     'VAL_DECREMENTO',
     BANDERA:        'VAL_BANDERA'
 }
 
@@ -18,7 +20,8 @@ function crearSimbolo(tipo, id, valor){
 
 class TS {
     constructor(simbolos) {
-        this._simbolos = simbolos;
+        this._simbolos = [];
+        this._simbolos = this._simbolos.concat(simbolos);
     }
     agregar(tipo, id, valor){
         var simbolo = this._simbolos.filter((simbolo)=>simbolo.id==id)[0];
@@ -153,11 +156,20 @@ class TS {
             else{
                 // a=3; donde a es un decimal EN ESTA PARTE VERIFICAN LOS POSIBLES CASTEOS
                 switch(simbolo.tipo){
+
                     case TIPO_VALOR.ENTERO:
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.DECIMAL:
                                 simbolo.valor==Math.trunc(valor.valor);
+                                return "";
+
+                            case TIPO_VALOR.INCREMENTO:
+                                simbolo.valor++;
+                                return "";
+
+                            case TIPO_VALOR.DECREMENTO:
+                                simbolo.valor--;
                                 return "";
 
                             case TIPO_VALOR.BANDERA:
@@ -178,6 +190,14 @@ class TS {
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
                                 simbolo.tipo==valor.valor;
+                                return "";
+                            
+                            case TIPO_VALOR.INCREMENTO:
+                                simbolo.valor == simbolo.valor + 1;
+                                return "";
+
+                            case TIPO_VALOR.DECREMENTO:
+                                simbolo.valor--;
                                 return "";
             
                             case TIPO_VALOR.BANDERA:
