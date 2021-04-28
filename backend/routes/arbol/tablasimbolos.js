@@ -28,7 +28,7 @@ class TS {
         if(simbolo){
             //Manejan si no existe variable
             console.log('La variable ya existe');
-            return undefined
+            return ""
         }
         else{
             if (tipo == valor.tipo){
@@ -142,7 +142,7 @@ class TS {
         }
         else{
             //Manejar que devolvorean si no existe
-            console.log('No existe la variable: '+id);
+            //console.log('No existe la variable: '+id);
             return undefined;
         }
     }
@@ -269,6 +269,16 @@ class TS {
                 }
             }
         }
+    }
+    pushts(nueva){
+        this._simbolos.push(nueva);
+    }
+    popts(){
+        var actual = this._simbolos.pop();
+        return actual
+    }
+    lengthts(){
+        return this._simbolos.length;
     }
     get simbolos() {
         return this._simbolos;
