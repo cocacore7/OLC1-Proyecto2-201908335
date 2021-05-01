@@ -137,8 +137,10 @@ CUERPO2
     | CUERPO2 LLAMADA       { $1.push($2); $$=$1; }
     | CUERPO2 IMPRIMIR      { $1.push($2); $$=$1; }
     | CUERPO2 SI            { $1.push($2); $$=$1; }
+    | CUERPO2 SWITCHH       { $1.push($2); $$=$1; }
     | CUERPO2 WHILEE        { $1.push($2); $$=$1; }
     | CUERPO2 DOWHILEE      { $1.push($2); $$=$1; }
+    | CUERPO2 FOR           { $1.push($2); $$=$1; }
     | CUERPO2 BREAKK        { $1.push($2); $$=$1; }
     | CUERPO2 CONTINUEE     { $1.push($2); $$=$1; }
     | IMPRIMIR              { $$ = [$1]; }
@@ -146,8 +148,10 @@ CUERPO2
     | ASIGNACION            { $$ = [$1]; }
     | LLAMADA               { $$ = [$1]; }
     | SI                    { $$ = [$1]; }
+    | SWITCHH               { $$ = [$1]; }
     | WHILEE                { $$ = [$1]; }
     | DOWHILEE              { $$ = [$1]; }
+    | FOR                   { $$ = [$1]; }
     | BREAKK                { $$ = [$1]; }
     | CONTINUEE             { $$ = [$1]; };
 
@@ -195,6 +199,31 @@ IMPRIMIR
     | imprimir parentesisa CASTEO parentesisc pcoma                                 { $$=INSTRUCCIONES.nuevoImprimir($3); }
     | imprimir parentesisa TERNARIO parentesisc pcoma                               { $$=INSTRUCCIONES.nuevoImprimir($3); };
 
+SI
+    :si parentesisa EXP parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec        { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa EXP parentesisc llavea CUERPO2 llavec                                   { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa EXP parentesisc llavea CUERPO2 llavec sino SI                           { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec                                { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino SI                        { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec   { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec                              { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
+    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino SI                      { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); };
+
+SWITCHH
+    :switch parentesisa EXP parentesisc llavea CASES llavec                         { $$=INSTRUCCIONES.nuevoSwitch($3, $6); }
+    |switch parentesisa CASTEO parentesisc llavea CASES llavec                      { $$=INSTRUCCIONES.nuevoSwitch($3, $6); }
+    |switch parentesisa TERNARIO parentesisc llavea CASES llavec                    { $$=INSTRUCCIONES.nuevoSwitch($3, $6); };
+
+CASES
+    : case EXP dospuntos CUERPO2 CASES                                              { $$=INSTRUCCIONES.nuevoCase($2, $4, [$5]); }
+    | case EXP dospuntos CUERPO2                                                    { $$=INSTRUCCIONES.nuevoCase($2, $4, undefined); }
+    | case CASTEO dospuntos CUERPO2 CASES                                           { $$=INSTRUCCIONES.nuevoCase($2, $4, [$5]); }
+    | case CASTEO dospuntos CUERPO2                                                 { $$=INSTRUCCIONES.nuevoCase($2, $4, undefined); }
+    | case TERNARIO dospuntos CUERPO2 CASES                                         { $$=INSTRUCCIONES.nuevoCase($2, $4, [$5]); }
+    | case TERNARIO dospuntos CUERPO2                                               { $$=INSTRUCCIONES.nuevoCase($2, $4, undefined); }
+    | default dospuntos CUERPO2                                                     { $$=INSTRUCCIONES.nuevoCase("defaultSwitch", $3, undefined); };
+
 WHILEE
     : mientras parentesisa EXP parentesisc llavea CUERPO2 llavec                    { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
     | mientras parentesisa CASTEO parentesisc llavea CUERPO2 llavec                 { $$=INSTRUCCIONES.nuevoWhile($3, $6); }
@@ -206,18 +235,8 @@ DOWHILEE
     | do llavea CUERPO2 llavec mientras parentesisa TERNARIO parentesisc pcoma      { $$=INSTRUCCIONES.nuevoDoWhile($3, $7); };
 
 FOR
-    : for parentesisa DECLARACION pcoma EXP pcoma EXP parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoFor($3, $5,$7,$10); };
-
-SI
-    :si parentesisa EXP parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec        { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
-    |si parentesisa EXP parentesisc llavea CUERPO2 llavec                                   { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
-    |si parentesisa EXP parentesisc llavea CUERPO2 llavec sino SI                           { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
-    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
-    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec                                { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
-    |si parentesisa CASTEO parentesisc llavea CUERPO2 llavec sino SI                        { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); }
-    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino llavea CUERPO2 llavec   { $$=INSTRUCCIONES.nuevoIf($3, $6, $10); }
-    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec                              { $$=INSTRUCCIONES.nuevoIf($3, $6, undefined); }
-    |si parentesisa TERNARIO parentesisc llavea CUERPO2 llavec sino SI                      { $$=INSTRUCCIONES.nuevoIf($3, $6, [$9]); };
+    : for parentesisa DECLARACION EXP pcoma EXP parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoFor($3, $4,$6,$9); }
+    | for parentesisa ASIGNACION EXP pcoma EXP parentesisc llavea CUERPO2 llavec     { $$=INSTRUCCIONES.nuevoFor($3, $4,$6,$9); };
 
 BREAKK
     : breakk pcoma { $$ = INSTRUCCIONES.nuevoBreak(); };

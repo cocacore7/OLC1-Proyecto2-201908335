@@ -106,50 +106,49 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
         else if(instruccion.tipo == TIPO_INSTRUCCION.IMPRIMIR){
             ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos);
         }
-        else if(instruccion.tipo == TIPO_INSTRUCCION.WHILEE){
-            var tslocal2=new TS([]);
-            tslocal.pushts(tslocal2)
-            tipots.push(["While"]);
-            var posible = ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
-            if(posible){
-                tslocal.popts();
-                tipots.pop();
-                return posible;
-            }
-            tipots.pop();
-            tslocal.popts();
-        }
-        else if(instruccion.tipo == TIPO_INSTRUCCION.DOWHILEE){
-            var tslocal2=new TS([]);
-            tslocal.pushts(tslocal2)
-            tipots.push(["DoWhile"]);
-            var posible = ejecutardowhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
-            if(posible){
-                tslocal.popts();
-                tipots.pop();
-                return posible;
-            }
-            tipots.pop();
-            tslocal.popts();
-        }
-        else if(instruccion.tipo == TIPO_INSTRUCCION.FORR){
-            var tslocal2=new TS([]);
-            tslocal.pushts(tslocal2)
-            tipots.push(["For"]);
-            var posible = ejecutarfor(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
-            if(posible){
-                tslocal.popts();
-                tipots.pop();
-                return posible;
-            }
-            tipots.pop();
-            tslocal.popts();
-        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.IFF){
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2)
             tipots.push(["If"]);
             var posible = ejecutarif(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            if(posible){
+                tslocal.popts();
+                tipots.pop();
+                return posible;
+            }
+            tipots.pop();
+            tslocal.popts();
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.SWITCHH){
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2)
+            tipots.push(["IDSwitch"]);
+            var posible = ejecutarswitch(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            if(posible){
+                tslocal.popts();
+                tipots.pop();
+                return posible;
+            }
+            tipots.pop();
+            tslocal.popts();
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.WHILEE){
+            var posible = ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            if(posible){
+                return posible;
+            }
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DOWHILEE){
+            var posible = ejecutardowhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            if(posible){
+                return posible;
+            }
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.FORR){
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2)
+            tipots.push(["VariableFor"]);
+            var posible = ejecutarfor(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
             if(posible){
                 tslocal.popts();
                 tipots.pop();
@@ -371,6 +370,48 @@ function ejecutarif(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
     }
 }
 
+function ejecutarswitch(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+    var valor = procesarexpresion(instruccion.identificador,tsglobal, tslocal,tipots,metodos);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        ejecutarcase(valor,instruccion.casos,tsglobal,tslocal,tipots,metodos,banderaciclo);
+    }
+}
+
+function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+    if(instruccion.caso == "defaultSwitch" && instruccion.cuerpocaso != undefined){
+        return ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,metodos,banderaciclo);
+    }
+    var valor = procesarexpresion(instruccion.caso,tsglobal, tslocal,tipots,metodos);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        if(identificador.tipo==valor.tipo){
+            if(identificador.valor==valor.valor){
+                var posible = ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                if (posible){
+                    if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
+                        console.log("Break De Case Switch");
+                    }
+                    else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+                        console.log("Error En Cuerpo Caso Switch");
+                        console.log(posible.resultado)
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+                }
+            }else{
+                return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+            }
+        }
+        else{
+            return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+        }
+    }
+}
+
 function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
     banderaciclo.push(".");
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
@@ -378,15 +419,24 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderacicl
         salida = "Error Semantico";
     }else{
         while(valor.valor){
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["While"]);
             var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
             if (posible){
                 if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
+                    tslocal.popts();
+                    tipots.pop();
                     break;
                 }
                 else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
+                    tslocal.popts();
+                    tipots.pop();
                     continue;
                 }
                 else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+                    tslocal.popts();
+                    tipots.pop();
                     console.log(posible.resultado)
                     salida = "Error Semantico";
                     break;
@@ -395,8 +445,12 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderacicl
             valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
             if (valor == undefined){
                 salida = "Error Semantico";
+                tslocal.popts();
+                tipots.pop();
                 break;
             }
+            tslocal.popts();
+            tipots.pop();
         }
     }
     banderaciclo.pop();
@@ -404,64 +458,43 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderacicl
 
 function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderaciclo){
     banderaciclo.push(".");
-    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal, tipots,metodos);
-    if (valor == undefined){
-        salida = "Error Semantico";
-    }else{
-        var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal, tipots,metodos,banderaciclo);
-        if (posible){
-            if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
-                console.log("Break En Primera Iteracion Do While");
-            }
-            else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
-                valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal, tipots,metodos);
-                if (valor == undefined){
-                    salida = "Error Semantico";
-                }else{
-                    while(valor.valor){
-                        posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
-                        if (posible){
-                            if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
-                                console.log("Break Iteraciones Do While");
-                                break;
-                            }
-                            else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
-                                continue;
-                            }
-                            else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
-                                console.log(posible.resultado)
-                                salida = "Error Semantico";
-                                break;
-                            }
-                        }
-                        valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
-                        if (valor == undefined){
-                            salida = "Error Semantico";
-                            break;
-                        }
-                    }
-                }
-            }
-            else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
-                console.log(posible.resultado)
-                salida = "Error Semantico";
-            }
-        }else{
-            valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
+    var tslocal2=new TS([]);
+    tslocal.pushts(tslocal2);
+    tipots.push(["DoWhile"]);
+    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal, tipots,metodos,banderaciclo);
+    if (posible){
+        if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
+            console.log("Break Primera Iteracion Do While");
+            tslocal.popts();
+            tipots.pop();
+        }
+        else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
+            console.log("Continue Primera Iteracion Do While");
+            tslocal.popts();
+            tipots.pop();
+            var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
             if (valor == undefined){
                 salida = "Error Semantico";
             }else{
                 while(valor.valor){
-                    posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                    var tslocal2=new TS([]);
+                    tslocal.pushts(tslocal2);
+                    tipots.push(["DoWhile"]);
+                    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
                     if (posible){
                         if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
-                            console.log("Break Iteraciones Do While");
+                            tslocal.popts();
+                            tipots.pop();
                             break;
                         }
                         else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
+                            tslocal.popts();
+                            tipots.pop();
                             continue;
                         }
                         else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+                            tslocal.popts();
+                            tipots.pop();
                             console.log(posible.resultado)
                             salida = "Error Semantico";
                             break;
@@ -469,28 +502,117 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderac
                     }
                     valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
                     if (valor == undefined){
+                        tslocal.popts();
+                        tipots.pop();
+                        salida = "Error Semantico";
+                        break;
+                    }
+                    tslocal.popts();
+                    tipots.pop();
+                }
+            }
+        }
+        else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+            console.log(posible.resultado)
+            salida = "Error Semantico";
+            tslocal.popts();
+            tipots.pop();
+        }
+    }else{
+        tslocal.popts();
+        tipots.pop();
+        var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            while(valor.valor){
+                var tslocal2=new TS([]);
+                tslocal.pushts(tslocal2);
+                tipots.push(["DoWhile"]);
+                var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                if (posible){
+                    if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
+                        tslocal.popts();
+                        tipots.pop();
+                        break;
+                    }
+                    else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
+                        tslocal.popts();
+                        tipots.pop();
+                        continue;
+                    }
+                    else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+                        tslocal.popts();
+                        tipots.pop();
+                        console.log(posible.resultado)
                         salida = "Error Semantico";
                         break;
                     }
                 }
+                valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
+                if (valor == undefined){
+                    tslocal.popts();
+                    tipots.pop();
+                    salida = "Error Semantico";
+                    break;
+                }
+                tslocal.popts();
+                tipots.pop();
             }
         }
     }
     banderaciclo.pop();
 }
 
-function ejecutarfor(instruccion, tsglobal, tslocal, tipots, metodos){
+function ejecutarfor(instruccion, tsglobal, tslocal, tipots, metodos,banderaciclo){
+    banderaciclo.push(".");
+    if(instruccion.declaracion.tipo == TIPO_INSTRUCCION.DECLARACION){
+        ejecutardeclaracionlocal(instruccion.declaracion, tsglobal,tslocal,tipots,metodos);
+    }
+    else if(instruccion.declaracion.tipo == TIPO_INSTRUCCION.ASIGNACION){
+        ejecutarasignacionlocal(instruccion.declaracion, tsglobal, tslocal,tipots,metodos);
+    }
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal, tipots,metodos);
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
-        ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal, tipots,metodos);
-        valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal, tipots,metodos);
-        if (valor == undefined){
-            salida = "Error Semantico";
+        while(valor.valor){
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["CuerpoFor"]);
+            var posible = ejecutarbloquelocal(instruccion.cuerpoFor,tsglobal,tslocal,tipots,metodos,banderaciclo);
+            if (posible){
+                if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
+                    tslocal.popts();
+                    tipots.pop();
+                    break;
+                }
+                else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
+                    tslocal.popts();
+                    tipots.pop();
+                    continue;
+                }
+                else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
+                    tslocal.popts();
+                    tipots.pop();
+                    console.log(posible.resultado)
+                    salida = "Error Semantico";
+                    break;
+                }
+            }
+            ejecutarasignacionlocal(instruccion.cambio, tsglobal, tslocal,tipots,metodos);
+            valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
+            if (valor == undefined){
+                salida = "Error Semantico";
+                tslocal.popts();
+                tipots.pop();
+                break;
+            }
+            tslocal.popts();
+            tipots.pop();
         }
-        console.log("Falta Terminar");
     }
+    banderaciclo.pop();
 }
 
 function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
@@ -594,7 +716,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
             return undefined;
         }
     }
-    if(expresion.tipo == TIPO_OPERACION.INCREMENTO){
+    else if(expresion.tipo == TIPO_OPERACION.INCREMENTO){
         var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots, metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO){
@@ -679,7 +801,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
             return undefined;
         }
     }
-    if(expresion.tipo == TIPO_OPERACION.DECREMENTO){
+    else if(expresion.tipo == TIPO_OPERACION.DECREMENTO){
         var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots, metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO){

@@ -44,9 +44,10 @@ const TIPO_INSTRUCCION = {
     FORR:               'INSTR_FOR',
     IFF:                'INSTR_IF',
     SWITCHH:            'INSTR_SWITCH',
+    CASEE:              'INSTR_CASE',
     BREAK:              'INSTR_BREAK',
     CONTINUE:           'INSTR_CONTINUE',
-    ERRORR:              'INSTR_ERROR'
+    ERRORR:             'INSTR_ERROR'
 }
 
 const INSTRUCCIONES = {
@@ -150,12 +151,19 @@ const INSTRUCCIONES = {
             cuerpofalso: cuerpofalso
         }
     },
-    nuevoSwitch: function(condicion, casos, definido){
+    nuevoSwitch: function(identificador, casos){
         return {
             tipo: TIPO_INSTRUCCION.SWITCHH,
-            condicion: condicion,
-            casos: casos,
-            definido: definido
+            identificador: identificador,
+            casos: casos
+        }
+    },
+    nuevoCase: function(caso, cuerpocaso, masCasos){
+        return {
+            tipo: TIPO_INSTRUCCION.CASEE,
+            caso: caso,
+            cuerpocaso: cuerpocaso,
+            masCasos: masCasos
         }
     },
     nuevoBreak: function(){
