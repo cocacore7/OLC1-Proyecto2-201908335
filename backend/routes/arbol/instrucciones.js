@@ -6,7 +6,17 @@ const TIPO_VALOR = {
     BANDERA:            'VAL_BANDERA',
     INCREMENTO:         'VAL_INCREMENTO',
     DECREMENTO:         'VAL_DECREMENTO',
-    IDENTIFICADOR:      'VAL_IDENTIFICADOR'
+    IDENTIFICADOR:      'VAL_IDENTIFICADOR',
+    VECTORE:            'VAL_VECTORE',
+    VECTORD:            'VAL_VECTORD',
+    VECTORCAR:          'VAL_VECTORCAR',
+    VECTORCAD:          'VAL_VECTORCAD',
+    VECTORB:            'VAL_VECTORB',
+    LISTAE:             'VAL_LISTAE',
+    LISTAD:             'VAL_LISTAD',
+    LISTACAR:           'VAL_LISTACAR',
+    LISTACAD:           'VAL_LISTACAD',
+    LISTAB:             'VAL_LISTAB'
 }
 
 const TIPO_OPERACION = {
@@ -28,6 +38,14 @@ const TIPO_OPERACION = {
     OR:                 'OP_OR',
     AND:                'OP_AND',
     NOT:                'OP_NOT',
+    LOWER:              'OP_LOWER',
+    UPPER:              'OP_UPPER',
+    LENGTH:             'OP_LENGTH',
+    TRUNCATE:           'OP_TRUNCATE',
+    ROUND:              'OP_ROUND',
+    TYPEOF:             'OP_TYPEOF',
+    TOSTRING:           'OP_TOSTRING',
+    TOCHARARRAY:        'OP_TOCHARARRAY',
     CASTEO:             'OP_CASTEO',
     TERNARIO:           'INSTR_TERNARIO'
 }

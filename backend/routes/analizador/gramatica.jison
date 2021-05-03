@@ -72,7 +72,7 @@
 "toupper"               return 'toupper';
 
 /* Funciones Nativas */
-"lenght"                return 'lenght';
+"length"                return 'lenght';
 "truncate"              return 'truncate';
 "round"                 return 'round';
 "typeof"                return 'typeof';
@@ -280,6 +280,14 @@ EXP
     | EXP and EXP                                       { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.AND, $1, $3); }
     | not EXP %prec UMENOS                              { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.NOT, $2); }
     | parentesisa EXP parentesisc                       { $$ = $2 }
+    | tolower parentesisa EXP parentesisc               { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.LOWER, $3); }
+    | toupper parentesisa EXP parentesisc               { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.UPPER, $3); }
+    | lenght parentesisa EXP parentesisc                { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.LENGTH, $3); }
+    | truncate parentesisa EXP parentesisc              { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TRUNCATE, $3); }
+    | round parentesisa EXP parentesisc                 { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.ROUND, $3); }
+    | typeof parentesisa EXP parentesisc                { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TYPEOF, $3); }
+    | tostring parentesisa EXP parentesisc              { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TOSTRING, $3); }
+    | tochararray parentesisa EXP parentesisc           { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TOCHARARRAY, $3); }
     | enteroo                                           { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.ENTERO, Number($1)); }
     | decimall                                          { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.DECIMAL, Number($1)); }
     | caracterr                                         { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.CARACTER, $1); }

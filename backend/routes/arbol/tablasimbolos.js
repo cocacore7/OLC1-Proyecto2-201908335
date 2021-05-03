@@ -7,7 +7,17 @@ const TIPO_DATO = {
     CADENA:         'VAL_CADENA',
     INCREMENTO:     'VAL_INCREMENTO',
     DECREMENTO:     'VAL_DECREMENTO',
-    BANDERA:        'VAL_BANDERA'
+    BANDERA:        'VAL_BANDERA',
+    VECTORE:        'VAL_VECTORE',
+    VECTORD:        'VAL_VECTORD',
+    VECTORCAR:      'VAL_VECTORCAR',
+    VECTORCAD:      'VAL_VECTORCAD',
+    VECTORB:        'VAL_VECTORB',
+    LISTAE:         'VAL_LISTAE',
+    LISTAD:         'VAL_LISTAD',
+    LISTACAR:       'VAL_LISTACAR',
+    LISTACAD:       'VAL_LISTACAD',
+    LISTAB:         'VAL_LISTAB'
 }
 
 function crearSimbolo(tipo, id, valor){
@@ -31,7 +41,11 @@ class TS {
             return ""
         }
         else{
-            if (tipo == valor.tipo){
+            if (valor == undefined){
+                this._simbolos.push(crearSimbolo(tipo, id, undefined));
+                return ""
+            }
+            else if (tipo == valor.tipo){
                 //Si hay casteos implicitos aca los verifican
                 this._simbolos.push(crearSimbolo(tipo, id, valor.valor));
                 return ""

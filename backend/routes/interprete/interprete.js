@@ -207,22 +207,26 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos){
 }
 
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,metodos){
-    var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal,tipots,metodos);
-    if (valor == undefined){
-        salida = "Error Semantico";
-    }else{
+    if(instruccion.expresion == undefined){
         var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
         if (error == undefined){
             salida = "Error Semantico";
+        }
+    }else{
+        var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal,tipots,metodos);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
         }
     }
 }
 
 function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
-    var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal,tipots,metodos);
-    if (valor == undefined){
-        salida = "Error Semantico";
-    }else{
+    if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
             var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
             if (error == undefined){
@@ -230,11 +234,46 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,metodos)
             }
         }else{
             var auxactual = tslocal.popts();
-            var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
-            if (error == undefined){
-                salida = "Error Semantico";
+            if (auxactual.id == undefined){
+                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
             }
-            tslocal.pushts(auxactual);
+        }
+    }else{
+        var valor = procesarexpresion(instruccion.expresion, tsglobal,tslocal,tipots,metodos);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if (tslocal.lengthts() == 0){
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else{
+                var auxactual = tslocal.popts();
+                if (auxactual.id == undefined){
+                    var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    tslocal.pushts(auxactual);
+                }else{
+                    tslocal.pushts(auxactual);
+                    var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }
+            }
         }
     }
 }
@@ -255,6 +294,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
         salida = "Error Semantico";
     }else{
         if(tslocal != undefined){
+            var encontrado = false;
             var aux = new TS([]);
             var postipo = tipots.length;
             while(postipo!=0) {
@@ -271,6 +311,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                             tslocal.pushts(aux.popts());
                             final--;
                         }
+                        encontrado = true;
                         break;
                     }
                 }else{
@@ -284,23 +325,19 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                             tslocal.pushts(aux.popts());
                             final--;
                         }
+                        encontrado = true;
                         break;
                     }
                 }
                 postipo--;
             }
-        }
-        else if(tsglobal.obtener(instruccion.identificador)!=undefined){
-            var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
-            if (error == undefined){
-                salida = "Error Semantico";
-            }
-        }
-        /*
-        if(tslocal.obtener(instruccion.identificador)!=undefined){
-            var error = tslocal.actualizar(instruccion.identificador, valor,metodos);
-            if (error == undefined){
-                salida = "Error Semantico";
+            if (!encontrado){
+                if(tsglobal.obtener(instruccion.identificador)!=undefined){
+                    var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }
             }
         }
         else if(tsglobal.obtener(instruccion.identificador)!=undefined){
@@ -308,7 +345,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
             if (error == undefined){
                 salida = "Error Semantico";
             }
-        }*/
+        }
     }
 }
 
@@ -1891,6 +1928,105 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
                 return undefined;;
         }
     }
+    else if(expresion.tipo == TIPO_OPERACION.LOWER){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.CADENA:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toLowerCase() };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion LOWER")
+                return undefined;;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.UPPER){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.CADENA:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toUpperCase() };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.LENGTH){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.CADENA:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.TRUNCATE){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.ENTERO:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor };
+            case TIPO_DATO.DECIMAL:
+                return { tipo:TIPO_DATO.ENTERO, valor: Math.trunc(valorIzq.valor) };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.ROUND){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.ENTERO:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor };
+            case TIPO_DATO.DECIMAL:
+                return { tipo:TIPO_DATO.ENTERO, valor: Math.round(valorIzq.valor) };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.TYPEOF){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.ENTERO:
+                return { tipo:TIPO_DATO.CADENA, valor: "Int" };
+            case TIPO_DATO.DECIMAL:
+                return { tipo:TIPO_DATO.CADENA, valor: "Double" };
+            case TIPO_DATO.CADENA:
+                return { tipo:TIPO_DATO.CADENA, valor: "String" };
+            case TIPO_DATO.CARACTER:
+                return { tipo:TIPO_DATO.CADENA, valor: "Char" };
+            case TIPO_DATO.BANDERA:
+                return { tipo:TIPO_DATO.CADENA, valor: "Boolean" };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.TOSTRING){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_VALOR.ENTERO:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            case TIPO_VALOR.DECIMAL:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+                    
+            case TIPO_VALOR.BANDERA:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.TOCHARARRAY){
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,metodos);
+        switch(valorIzq.tipo){
+            case TIPO_DATO.CADENA:
+                return { tipo:TIPO_DATO.LISTACAR, valor: valorIzq.valor.split('') };
+            default:
+                console.log("Tipo De Dato Invalido Para Funcion UPPER")
+                return undefined;
+        }
+    }
     else if(expresion.tipo == TIPO_OPERACION.CASTEO){
         var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots, metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots, metodos);
@@ -1905,7 +2041,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 
                     default:
                         console.log('Casteo Explicito Invalido');
-                        return undefined;;
+                        return undefined;
                 }
             
             case TIPO_VALOR.DECIMAL:
@@ -1918,7 +2054,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
     
                     default:
                         console.log('Casteo Explicito Invalido');
-                        return undefined;;
+                        return undefined;
                 }
 
             case TIPO_VALOR.CARACTER:
@@ -1928,7 +2064,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 
                     default:
                         console.log('Casteo Explicito Invalido');
-                        return undefined;;
+                        return undefined;
                 }
 
             case TIPO_VALOR.CADENA:
@@ -1939,10 +2075,13 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 
                     case TIPO_VALOR.DECIMAL:
                         return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
+                    
+                    case TIPO_VALOR.BANDERA:
+                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
     
                     default:
                         console.log('Casteo Explicito Invalido');
-                        return undefined;;
+                        return undefined;
                 }
         }
     }
