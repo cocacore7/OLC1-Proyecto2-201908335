@@ -5,10 +5,11 @@ const TIPO_DATO = require('../arbol/tablasimbolos').TIPO_DATO;
 
 const TS = require('../arbol/tablasimbolos').TS;
 let salida = '';
-//let banderaciclo = false;
+let tsReporte = new TS([]);
 
 function ejecutar(arbol){
     console.log(arbol);
+    tsReporte = new TS([]);
     salida='';
     let tsglobal = new TS([]);
     let tslocal = new TS([]);
@@ -17,7 +18,7 @@ function ejecutar(arbol){
     let banderaciclo = [];
     let tipots = []
 
-    ejecutarbloqueglobal(arbol, tsglobal, tslocal,tipots, metodos, main);
+    ejecutarbloqueglobal(arbol, tsglobal, tslocal,tipots,"BloqueGlobal-", metodos, main);
     if(main.length==1){
         metodos.forEach(metodo2=>{
             if(metodo2.identificador==main[0].identificador){
@@ -37,9 +38,10 @@ function ejecutar(arbol){
                     var tslocal2=new TS([]);
                     tipots.push(".");
                     for(var contador=0;contador<main[0].parametros.length;contador++){
-                        tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador]);
+                        tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],"ParametroMain-");
+                        tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],"ParametroMain-");
                     }
-                    ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots, metodos,banderaciclo);
+                    ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots,"BloqueLocalPrincipal-", metodos,banderaciclo);
                 }else{
                     console.log("Error se estan mandando una cantidad de valores mayor a la que recibe el metodo")
                     salida = "Error Semantico"
@@ -54,13 +56,39 @@ function ejecutar(arbol){
     return salida;
 }
 
-function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots, metodos, main){
+function GraficaTS(){
+    let grafo = ""
+    grafo = "digraph G { bgcolor=\"yellow:red\"\n"
+    grafo += "subgraph cluster1 {fillcolor=\"blue:green\" style=\"filled\"\n"
+    grafo += "node [shape=record fillcolor=\"gold:brown\" style=\"radial\" gradientangle=180]\n"
+    grafo += "a0 [label=<\n"
+    grafo += "<TABLE border=\"10\" cellspacing=\"10\" cellpadding=\"10\" style=\"rounded\" bgcolor=\"/rdylgn11/1:/rdylgn11/11\" gradientangle=\"315\">\n"
+    grafo += "<TR>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"TIPO"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"IDENTIFICADOR"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"VALOR"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"AMBITO"+"</TD>\n"
+    grafo += "</TR>\n"
+    for (let i = 0; i < tsReporte._simbolos.length; i++) {
+        grafo += "<TR>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].tipo+"</TD>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].id+"</TD>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].valor+"</TD>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].ambito+"</TD>\n"
+        grafo += "</TR>\n"
+    }
+    grafo += "</TABLE>>];\n"
+    grafo += "}}\n"
+    return grafo
+}
+
+function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots,ambito, metodos, main){
     instrucciones.forEach((instruccion)=>{
         if (salida == "Error Semantico"){
             console.log("Error Semantico")
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
-            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots);
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-");
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots);
@@ -75,7 +103,7 @@ function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots, metodos, 
     });
 }
 
-function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,banderaciclo){
+function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,metodos,banderaciclo){
     for(var i=0; i<instrucciones.length; i++){
         instruccion = instrucciones[i];
         if (salida == "Error Semantico"){
@@ -83,7 +111,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
             continue;
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
-            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,metodos);
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos);
@@ -91,13 +119,13 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
         else if(instruccion.tipo == TIPO_INSTRUCCION.LLAMADA){
             if(banderaciclo.length != 0){
                 let banderaciclonueva = [];
-                var posible = ejecutarllamada(instruccion, tsglobal, tslocal,tipots, metodos,banderaciclonueva);
+                var posible = ejecutarllamada(instruccion, tsglobal, tslocal,tipots,"BloqueLocalLlamada-", metodos,banderaciclonueva);
                 if(posible){
                     return posible;
                 }
             }
             else{
-                var posible = ejecutarllamada(instruccion, tsglobal, tslocal,tipots, metodos,banderaciclo);
+                var posible = ejecutarllamada(instruccion, tsglobal, tslocal,tipots,"BloqueLocalLlamada-", metodos,banderaciclo);
                 if(posible){
                     return posible;
                 }
@@ -110,7 +138,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2)
             tipots.push(["If"]);
-            var posible = ejecutarif(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueIF-",metodos,banderaciclo);
             if(posible){
                 tslocal.popts();
                 tipots.pop();
@@ -123,7 +151,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2)
             tipots.push(["IDSwitch"]);
-            var posible = ejecutarswitch(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarswitch(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueSWITCH-",metodos,banderaciclo);
             if(posible){
                 tslocal.popts();
                 tipots.pop();
@@ -133,13 +161,13 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
             tslocal.popts();
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.WHILEE){
-            var posible = ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarwhile(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueWHILE-",metodos,banderaciclo);
             if(posible){
                 return posible;
             }
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.DOWHILEE){
-            var posible = ejecutardowhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutardowhile(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueDOWHILE-",metodos,banderaciclo);
             if(posible){
                 return posible;
             }
@@ -148,7 +176,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,metodos,ban
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2)
             tipots.push(["VariableFor"]);
-            var posible = ejecutarfor(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarfor(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueFOR-",metodos,banderaciclo);
             if(posible){
                 tslocal.popts();
                 tipots.pop();
@@ -206,9 +234,10 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos){
     }
 }
 
-function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,metodos){
+function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
     if(instruccion.expresion == undefined){
-        var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+        var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+        tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
         if (error == undefined){
             salida = "Error Semantico";
         }
@@ -217,7 +246,8 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,metodos
         if (valor == undefined){
             salida = "Error Semantico";
         }else{
-            var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+            var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -225,24 +255,27 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,metodos
     }
 }
 
-function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
+function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
     if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
-            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
         }else{
             var auxactual = tslocal.popts();
             if (auxactual.id == undefined){
-                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
                 tslocal.pushts(auxactual);
             }else{
                 tslocal.pushts(auxactual);
-                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
@@ -254,21 +287,24 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,metodos)
             salida = "Error Semantico";
         }else{
             if (tslocal.lengthts() == 0){
-                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
             }else{
                 var auxactual = tslocal.popts();
                 if (auxactual.id == undefined){
-                    var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                    var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
                     tslocal.pushts(auxactual);
                 }else{
                     tslocal.pushts(auxactual);
-                    var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+                    var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
@@ -282,6 +318,7 @@ function ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,metodos)
     var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
     if(tsglobal.obtener(instruccion.identificador)!=undefined){
         var error =  tsglobal.actualizar(instruccion.identificador, valor,metodos);
+        tsReporte.actualizar(instruccion.identificador, valor,metodos);
         if (error == undefined){
             salida = "Error Semantico";
         }
@@ -303,6 +340,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                     aux.pushts(auxactual);
                     if(auxactual.obtener(instruccion.identificador)!=undefined){
                         var error = auxactual.actualizar(instruccion.identificador, valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador, valor,metodos);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -317,6 +355,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                 }else{
                     if(tslocal.obtener(instruccion.identificador)!=undefined){
                         var error = tslocal.actualizar(instruccion.identificador, valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador, valor,metodos);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -334,6 +373,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
             if (!encontrado){
                 if(tsglobal.obtener(instruccion.identificador)!=undefined){
                     var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
+                    tsReporte.actualizar(instruccion.identificador, valor,metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
@@ -342,6 +382,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
         }
         else if(tsglobal.obtener(instruccion.identificador)!=undefined){
             var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
+            tsReporte.actualizar(instruccion.identificador, valor,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -349,7 +390,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
     }
 }
 
-function ejecutarllamada(instruccion, tsglobal, tslocal,tipots, metodos,banderaciclo){
+function ejecutarllamada(instruccion, tsglobal, tslocal,tipots,ambito, metodos,banderaciclo){
     var error;
     metodos.forEach(metodo2=>{
         if(metodo2.identificador==instruccion.identificador){
@@ -375,10 +416,11 @@ function ejecutarllamada(instruccion, tsglobal, tslocal,tipots, metodos,banderac
                 var tipots2=[];
                 tipots2.push(".");
                 for(var contador=0;contador<instruccion.parametros.length;contador++){
-                    tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador]);
+                    tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],ambito+"ParametroLlamada");
+                    tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],ambito+"ParametroLlamada");
                 }
                 console.log(tslocal2._simbolos);
-                error = ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots2, metodos,banderaciclo);
+                error = ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots2,ambito, metodos,banderaciclo);
             }
             else{
                 console.log("Error se estan mandando una cantidad de valores mayor a la que recibe el metodo");
@@ -391,34 +433,34 @@ function ejecutarllamada(instruccion, tsglobal, tslocal,tipots, metodos,banderac
     }
 }
 
-function ejecutarif(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+function ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito,metodos,banderaciclo){
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
         if(valor.valor==true){
-            return ejecutarbloquelocal(instruccion.cuerpoverdadero,tsglobal,tslocal,tipots,metodos,banderaciclo);
+            return ejecutarbloquelocal(instruccion.cuerpoverdadero,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
         }
         else if(valor.valor==false){
             if(instruccion.cuerpofalso!=undefined){
-                return ejecutarbloquelocal(instruccion.cuerpofalso,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                return ejecutarbloquelocal(instruccion.cuerpofalso,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
             }
         }
     }
 }
 
-function ejecutarswitch(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+function ejecutarswitch(instruccion, tsglobal, tslocal,tipots,ambito,metodos,banderaciclo){
     var valor = procesarexpresion(instruccion.identificador,tsglobal, tslocal,tipots,metodos);
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
-        ejecutarcase(valor,instruccion.casos,tsglobal,tslocal,tipots,metodos,banderaciclo);
+        ejecutarcase(valor,instruccion.casos,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
     }
 }
 
-function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,ambito,metodos,banderaciclo){
     if(instruccion.caso == "defaultSwitch" && instruccion.cuerpocaso != undefined){
-        return ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,metodos,banderaciclo);
+        return ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,ambito+"CuerpoDefault-",metodos,banderaciclo);
     }
     var valor = procesarexpresion(instruccion.caso,tsglobal, tslocal,tipots,metodos);
     if (valor == undefined){
@@ -426,7 +468,7 @@ function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,metodo
     }else{
         if(identificador.tipo==valor.tipo){
             if(identificador.valor==valor.valor){
-                var posible = ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                var posible = ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,ambito+"CuerpoCaso-",metodos,banderaciclo);
                 if (posible){
                     if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
                         console.log("Break De Case Switch");
@@ -437,19 +479,19 @@ function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,metodo
                         salida = "Error Semantico";
                     }
                 }else{
-                    return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+                    return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
                 }
             }else{
-                return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+                return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
             }
         }
         else{
-            return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,metodos,banderaciclo);
+            return ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
         }
     }
 }
 
-function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderaciclo){
+function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,ambito,metodos,banderaciclo){
     banderaciclo.push(".");
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
     if (valor == undefined){
@@ -459,7 +501,7 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderacicl
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2);
             tipots.push(["While"]);
-            var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
             if (posible){
                 if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
                     tslocal.popts();
@@ -493,12 +535,12 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,metodos,banderacicl
     banderaciclo.pop();
 }
 
-function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderaciclo){
+function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,ambito,metodos,banderaciclo){
     banderaciclo.push(".");
     var tslocal2=new TS([]);
     tslocal.pushts(tslocal2);
     tipots.push(["DoWhile"]);
-    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal, tipots,metodos,banderaciclo);
+    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal, tipots,ambito,metodos,banderaciclo);
     if (posible){
         if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
             console.log("Break Primera Iteracion Do While");
@@ -517,7 +559,7 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderac
                     var tslocal2=new TS([]);
                     tslocal.pushts(tslocal2);
                     tipots.push(["DoWhile"]);
-                    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                    var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
                     if (posible){
                         if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
                             tslocal.popts();
@@ -566,7 +608,7 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderac
                 var tslocal2=new TS([]);
                 tslocal.pushts(tslocal2);
                 tipots.push(["DoWhile"]);
-                var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,metodos,banderaciclo);
+                var posible = ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
                 if (posible){
                     if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
                         tslocal.popts();
@@ -601,13 +643,13 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,metodos,banderac
     banderaciclo.pop();
 }
 
-function ejecutarfor(instruccion, tsglobal, tslocal, tipots, metodos,banderaciclo){
+function ejecutarfor(instruccion, tsglobal, tslocal, tipots,ambito, metodos,banderaciclo){
     banderaciclo.push(".");
     if(instruccion.declaracion.tipo == TIPO_INSTRUCCION.DECLARACION){
-        ejecutardeclaracionlocal(instruccion.declaracion, tsglobal,tslocal,tipots,metodos);
+        ejecutardeclaracionlocal(instruccion.declaracion, tsglobal,tslocal,tipots,ambito+"DeclaracionVariableFor-",metodos);
     }
     else if(instruccion.declaracion.tipo == TIPO_INSTRUCCION.ASIGNACION){
-        ejecutarasignacionlocal(instruccion.declaracion, tsglobal, tslocal,tipots,metodos);
+        ejecutarasignacionlocal(instruccion.declaracion, tsglobal, tslocal,tipots,ambito,metodos);
     }
     var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal, tipots,metodos);
     if (valor == undefined){
@@ -617,7 +659,7 @@ function ejecutarfor(instruccion, tsglobal, tslocal, tipots, metodos,banderacicl
             var tslocal2=new TS([]);
             tslocal.pushts(tslocal2);
             tipots.push(["CuerpoFor"]);
-            var posible = ejecutarbloquelocal(instruccion.cuerpoFor,tsglobal,tslocal,tipots,metodos,banderaciclo);
+            var posible = ejecutarbloquelocal(instruccion.cuerpoFor,tsglobal,tslocal,tipots,ambito,metodos,banderaciclo);
             if (posible){
                 if (posible.tipo_resultado == TIPO_INSTRUCCION.BREAK){
                     tslocal.popts();
@@ -637,7 +679,7 @@ function ejecutarfor(instruccion, tsglobal, tslocal, tipots, metodos,banderacicl
                     break;
                 }
             }
-            ejecutarasignacionlocal(instruccion.cambio, tsglobal, tslocal,tipots,metodos);
+            ejecutarasignacionlocal(instruccion.cambio, tsglobal, tslocal,tipots,ambito,metodos);
             valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,metodos);
             if (valor == undefined){
                 salida = "Error Semantico";
@@ -2173,11 +2215,13 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
     else if(expresion.expresion == TIPO_VALOR.INCREMENTO){
         var valor = { tipo:TIPO_DATO.INCREMENTO, valor: 1}
         valor = tslocal.actualizar(expresion.identificador, valor,metodos);
+        tsReporte.actualizar(expresion.identificador, valor,metodos);
         return valor
     }
     else if(expresion.expresion == TIPO_VALOR.DECREMENTO){
         var valor = { tipo:TIPO_DATO.DECREMENTO, valor: 1}
         valor = tslocal.actualizar(expresion.identificador, valor,metodos);
+        tsReporte.actualizar(expresion.identificador, valor,metodos);
         return valor
     }
     else if(expresion == TIPO_VALOR.INCREMENTO){
@@ -2189,3 +2233,4 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 }
 
 module.exports.ejecutar = ejecutar;
+module.exports.GraficaTS = GraficaTS;

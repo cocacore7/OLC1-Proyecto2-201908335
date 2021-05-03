@@ -111,18 +111,16 @@
 
     <table style="width:100%">
       <tr>
-        <th>Identificador</th>
         <th>Tipo de dato</th>
-        <th>Ubicacion relativa</th>
-        <th>Inicio Indice</th>
-        <th>Tamanio</th>
+        <th>Identificador</th>
+        <th>Valor</th>
+        <th>Ambito</th>
       </tr>
       <tr *ngFor="let simbolo of simbolos">
-        <td>{{simbolo.id}}</td>
-        <td>{{simbolo.tipo3}}</td>
-        <td>{{simbolo.ubicacionrelativa}}</td>
-        <td>{{simbolo.inicioindice}}</td>
-        <td>{{simbolo.tamanio}}</td>
+        <td>{{simbolo.tipo}}</td>
+        <td>{{simbolo.identificador}}</td>
+        <td>{{simbolo.valor}}</td>
+        <td>{{simbolo.ambito}}</td>
       </tr>
     </table>
 
