@@ -108,21 +108,7 @@
     <mat-toolbar>
       <button mat-button (click)='regresareditorreportesimbolos()'>Regresar</button>
     </mat-toolbar>
-
-    <table style="width:100%">
-      <tr>
-        <th>Tipo de dato</th>
-        <th>Identificador</th>
-        <th>Valor</th>
-        <th>Ambito</th>
-      </tr>
-      <tr *ngFor="let simbolo of simbolos">
-        <td>{{simbolo.tipo}}</td>
-        <td>{{simbolo.identificador}}</td>
-        <td>{{simbolo.valor}}</td>
-        <td>{{simbolo.ambito}}</td>
-      </tr>
-    </table>
+    <img [src]="ts">
 
   </div>
 

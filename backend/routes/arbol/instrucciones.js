@@ -65,6 +65,7 @@ const TIPO_INSTRUCCION = {
     CASEE:              'INSTR_CASE',
     BREAK:              'INSTR_BREAK',
     CONTINUE:           'INSTR_CONTINUE',
+    RETURN:             'INSTR_RETURN',
     ERRORR:             'INSTR_ERROR'
 }
 
@@ -192,6 +193,11 @@ const INSTRUCCIONES = {
     nuevoContinue: function(){
         return{
             tipo: TIPO_INSTRUCCION.CONTINUE
+        }
+    },
+    nuevoReturn: function(){
+        return{
+            tipo: TIPO_INSTRUCCION.RETURN
         }
     },
     nuevoTernario: function(tipo, condicion, valverdadero, valfalso){

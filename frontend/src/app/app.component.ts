@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { filter, take } from 'rxjs/operators';
+import { DomSanitizer } from '@angular/platform-browser';
 import {
   MonacoEditorComponent,
   MonacoEditorConstructionOptions,
@@ -57,9 +58,11 @@ export class AppComponent {
   optimizaciones = []
   funciones = []
   cadenaerrores = ''
+  public ts;
 
   urlimagen = "http://localhost:3000/grafo?a=" + new Date().getTime();
   urlimagen2 = "http://localhost:3000/grafo2?a=" + new Date().getTime();
+  urlimagen3 = "http://localhost:3000/grafo3?a=" + new Date().getTime();
 
   @ViewChild(MonacoEditorComponent, { static: false })
   monacoComponent: MonacoEditorComponent;
@@ -95,8 +98,8 @@ export class AppComponent {
 
   archivo: File = null;
 
-  constructor(private monacoLoaderService: MonacoEditorLoaderService, private http: HttpClient) {
-
+  constructor(private monacoLoaderService: MonacoEditorLoaderService, private http: HttpClient,private sanitizer: DomSanitizer) {
+    
     this.monacoLoaderService.isMonacoLoaded$
       .pipe(
         filter(isLoaded => isLoaded),
@@ -236,11 +239,14 @@ export class AppComponent {
   }
 
   reportesimbolos() {
-    this.http.post('http://localhost:3000/simbolos', {}, { responseType: 'text' }).subscribe(res => {
-      this.simbolos = JSON.parse(res.toString())
-      this.banderaeditorr = false;
-      this.banderareportesimbolos = true;
+    this.http.get("http://localhost:3000/grafo3?a=" + new Date().getTime(), { responseType: 'text' }).subscribe(res => {
+      this.urlimagen3 = res.toString()
+      this.ts = this.sanitizer.bypassSecurityTrustResourceUrl(res.toString());
+      console.log(this.ts)
+      
     })
+    this.banderaeditorr = false;
+    this.banderareportesimbolos = true;
   }
 
   reportefunciones() {

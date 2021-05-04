@@ -64,7 +64,7 @@
 /* Sentencias de Transferencias */
 "break"                 return 'breakk';
 "continue"              return 'continuee';
-"return"                return 'return';
+"return"                return 'returnn';
 
 /* Funciones */
 "print"                 return 'imprimir';
@@ -83,11 +83,11 @@
 "exec"                      return 'exec';
 
 /* Tipos Valores */
-([0-9])+(["."])([0-9])+     return 'decimall';
-[0-9]+                      return 'enteroo';
-([a-zA-Z])[a-zA-Z0-9_]*     return 'identificador';
-\"[^\"]*\"                  { yytext = yytext.substr(1, yyleng-2); return 'cadenaa'; }
-\'[^\']*\'                   { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
+([0-9])+(["."])([0-9])+                     return 'decimall';
+[0-9]+                                      return 'enteroo';
+([a-zA-Z])[a-zA-Z0-9_]*                     return 'identificador';
+\"([^\"]|"\\n"|"\\r"|"\\t")*\"              { yytext = yytext.substr(1, yyleng-2); return 'cadenaa'; }
+\'([^\']|"\\n"|"\\r"|"\\t")?\'              { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
 
 <<EOF>>                 return 'EOF';
 
@@ -143,6 +143,7 @@ CUERPO2
     | CUERPO2 FOR           { $1.push($2); $$=$1; }
     | CUERPO2 BREAKK        { $1.push($2); $$=$1; }
     | CUERPO2 CONTINUEE     { $1.push($2); $$=$1; }
+    | CUERPO2 RETURNN       { $1.push($2); $$=$1; }
     | IMPRIMIR              { $$ = [$1]; }
     | DECLARACION           { $$ = [$1]; }
     | ASIGNACION            { $$ = [$1]; }
@@ -153,7 +154,8 @@ CUERPO2
     | DOWHILEE              { $$ = [$1]; }
     | FOR                   { $$ = [$1]; }
     | BREAKK                { $$ = [$1]; }
-    | CONTINUEE             { $$ = [$1]; };
+    | CONTINUEE             { $$ = [$1]; }
+    | RETURNN               { $$ = [$1]; };
 
 MAIN
     : exec identificador parentesisa parentesisc pcoma                              {$$=INSTRUCCIONES.nuevoMain($2, []);}
@@ -243,6 +245,9 @@ BREAKK
 
 CONTINUEE
     : continuee pcoma { $$ = INSTRUCCIONES.nuevoContinue(); };
+
+RETURNN
+    : returnn pcoma { $$ = INSTRUCCIONES.nuevoReturn(); };
 
 CASTEO
     : parentesisa TIPO parentesisc EXP { $$=INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.CASTEO, INSTRUCCIONES.nuevoValor($2,0), $4); };

@@ -2,6 +2,8 @@ const TIPO_INSTRUCCION = require('../arbol/instrucciones').TIPO_INSTRUCCION;
 const TIPO_OPERACION = require('../arbol/instrucciones').TIPO_OPERACION;
 const TIPO_VALOR = require('../arbol/instrucciones').TIPO_VALOR;
 const TIPO_DATO = require('../arbol/tablasimbolos').TIPO_DATO;
+const fs = require('fs');
+var base64 = require('base-64');
 
 const TS = require('../arbol/tablasimbolos').TS;
 let salida = '';
@@ -79,7 +81,21 @@ function GraficaTS(){
     }
     grafo += "</TABLE>>];\n"
     grafo += "}}\n"
-    return grafo
+    fs.readFile('./routes/arbol/TS.dot', 'utf8', function(err, data) {
+        if (err) {
+          return console.log(err);
+        }
+    });
+    fs.writeFile("./routes/arbol/TS.dot", grafo, function(err) {
+        if (err) {
+          return console.log(err);
+        }
+      });
+    const child = require("child_process");
+    child.spawn('cmd',['/c','dot -Tpng ./routes/arbol/TS.dot -o C:/Users/usuario/OneDrive/Escritorio/Imagenes/TS.png'])
+    let imageBuffer = new Buffer("C:/Users/usuario/OneDrive/Escritorio/Imagenes/TS.png", "utf-8")
+    var g = base64.encode(imageBuffer)
+    return "http://127.0.0.1:8887/TS.png"
 }
 
 function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots,ambito, metodos, main){
@@ -215,6 +231,12 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,meto
                 }
             }
             
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.RETURN){
+            return{
+                tipo_resultado: TIPO_INSTRUCCION.RETURN,
+                resultado: undefined
+            }
         }
     }
 }
@@ -429,6 +451,9 @@ function ejecutarllamada(instruccion, tsglobal, tslocal,tipots,ambito, metodos,b
         }
     });
     if (error){
+        if(error.tipo_resultado == "INSTR_RETURN"){
+            return undefined
+        }
         return error;
     }
 }
@@ -513,6 +538,15 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,ambito,metodos,band
                     tipots.pop();
                     continue;
                 }
+                else if(posible.tipo_resultado == TIPO_INSTRUCCION.RETURN){
+                    tslocal.popts();
+                    tipots.pop();
+                    banderaciclo.pop();
+                    return{
+                        tipo_resultado: TIPO_INSTRUCCION.RETURN,
+                        resultado: undefined
+                    }
+                }
                 else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
                     tslocal.popts();
                     tipots.pop();
@@ -547,6 +581,11 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,ambito,metodos,b
             tslocal.popts();
             tipots.pop();
         }
+        else if (posible.tipo_resultado == TIPO_INSTRUCCION.RETURN){
+            console.log("Return Primera Iteracion Do While");
+            tslocal.popts();
+            tipots.pop();
+        }
         else if(posible.tipo_resultado == TIPO_INSTRUCCION.CONTINUE){
             console.log("Continue Primera Iteracion Do While");
             tslocal.popts();
@@ -570,6 +609,15 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,ambito,metodos,b
                             tslocal.popts();
                             tipots.pop();
                             continue;
+                        }
+                        else if(posible.tipo_resultado == TIPO_INSTRUCCION.RETURN){
+                            tslocal.popts();
+                            tipots.pop();
+                            banderaciclo.pop();
+                            return{
+                                tipo_resultado: TIPO_INSTRUCCION.RETURN,
+                                resultado: undefined
+                            }
                         }
                         else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
                             tslocal.popts();
@@ -619,6 +667,15 @@ function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,ambito,metodos,b
                         tslocal.popts();
                         tipots.pop();
                         continue;
+                    }
+                    else if(posible.tipo_resultado == TIPO_INSTRUCCION.RETURN){
+                        tslocal.popts();
+                        tipots.pop();
+                        banderaciclo.pop();
+                        return{
+                            tipo_resultado: TIPO_INSTRUCCION.RETURN,
+                            resultado: undefined
+                        }
                     }
                     else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
                         tslocal.popts();
@@ -670,6 +727,15 @@ function ejecutarfor(instruccion, tsglobal, tslocal, tipots,ambito, metodos,band
                     tslocal.popts();
                     tipots.pop();
                     continue;
+                }
+                else if(posible.tipo_resultado == TIPO_INSTRUCCION.RETURN){
+                    tslocal.popts();
+                    tipots.pop();
+                    banderaciclo.pop();
+                    return{
+                        tipo_resultado: TIPO_INSTRUCCION.RETURN,
+                        resultado: undefined
+                    }
                 }
                 else if(posible.tipo_resultado == TIPO_INSTRUCCION.ERRORR){
                     tslocal.popts();
@@ -2145,9 +2211,20 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
         return { tipo:TIPO_DATO.DECIMAL, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CARACTER){
+        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
+        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
+        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
+        expresion.valor = expresion.valor.replace(/\\"/g,'\"');
+        expresion.valor = expresion.valor.replace(/\\'/g,'\'');
         return { tipo:TIPO_DATO.CARACTER, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CADENA){
+        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
+        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
+        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
+        expresion.valor = expresion.valor.replace(/\\/g,'\'');
+        expresion.valor = expresion.valor.replace(/\\"/g,'\"');
+        expresion.valor = expresion.valor.replace(/\\'/g,'\'');
         return { tipo:TIPO_DATO.CADENA, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.BANDERA){

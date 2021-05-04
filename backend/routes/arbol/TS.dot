@@ -1,0 +1,49 @@
+digraph G { bgcolor="yellow:red"
+subgraph cluster1 {fillcolor="blue:green" style="filled"
+node [shape=record fillcolor="gold:brown" style="radial" gradientangle=180]
+a0 [label=<
+<TABLE border="10" cellspacing="10" cellpadding="10" style="rounded" bgcolor="/rdylgn11/1:/rdylgn11/11" gradientangle="315">
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">TIPO</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">IDENTIFICADOR</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VALOR</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">AMBITO</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">n</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">10</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">cadenaFigura</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . </TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-DeclaracionLocal-Variable</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">i</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">11</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-DeclaracionLocal-Variable</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">j</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">31</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-BloqueWHILE-DeclaracionLocal-Variable</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">absolutoi</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">10</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-BloqueWHILE-BloqueWHILE-DeclaracionLocal-Variable</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">absolutoj</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">30</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-BloqueWHILE-BloqueWHILE-DeclaracionLocal-Variable</TD>
+</TR>
+</TABLE>>];
+}}
