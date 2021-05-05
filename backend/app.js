@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var compilarRouter = require('./routes/compilar');
 var simbolosRouter = require('./routes/simbolos');
+var arbolRouter = require('./routes/Arbol');
 
 var app = express();
 
@@ -29,6 +30,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/compilar', compilarRouter);
 app.use('/grafo3', simbolosRouter);
+app.use('/grafo', arbolRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -243,10 +243,10 @@ export class AppComponent {
       this.urlimagen3 = res.toString()
       this.ts = this.sanitizer.bypassSecurityTrustResourceUrl(res.toString());
       console.log(this.ts)
-      
+      this.banderaeditorr = false;
+      this.banderareportesimbolos = true;
     })
-    this.banderaeditorr = false;
-    this.banderareportesimbolos = true;
+    
   }
 
   reportefunciones() {
@@ -274,9 +274,22 @@ export class AppComponent {
   }
 
   reporteast() {
-    this.banderaeditorr = false;
-    this.banderaast = true;
-    this.urlimagen = "http://localhost:3000/grafo?a=" + new Date().getTime();
+    //this.banderaeditorr = false;
+    //this.banderaast = true;
+    //this.urlimagen = "http://localhost:3000/grafo?a=" + new Date().getTime();
+    this.editor3.setValue('')
+    this.editor2.setValue('')
+    let formData = new FormData();
+    let nombre = "entrada1.txt"
+
+    formData.append('archivo', new Blob([this.tabs[this.selected.value].formm.value], { type: "text/plain" }), nombre);
+    this.http.post("http://localhost:3000/grafo?a=" + new Date().getTime(), formData, { responseType: 'text' }).subscribe((res:any) => {
+      this.urlimagen = res.toString()
+      console.log(this.urlimagen)
+      this.banderaeditorr = false;
+      this.banderaast = true;
+    })
+    console.log(this.urlimagen)
   }
 
   reportebloque() {
