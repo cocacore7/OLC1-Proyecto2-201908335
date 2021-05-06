@@ -23,7 +23,7 @@ function ejecutar(arbol){
     ejecutarbloqueglobal(arbol, tsglobal, tslocal,tipots,"BloqueGlobal-", metodos, main);
     if(main.length==1){
         metodos.forEach(metodo2=>{
-            if(metodo2.identificador==main[0].identificador){
+            if(metodo2.identificador.toLowerCase()==main[0].identificador.toLowerCase() ){
                 if(metodo2.parametros.length==main[0].parametros.length){
                     var valoresmetodo = [];
                     for(var contador = 0; contador<main[0].parametros.length;contador++){
@@ -40,8 +40,8 @@ function ejecutar(arbol){
                     var tslocal2=new TS([]);
                     tipots.push(".");
                     for(var contador=0;contador<main[0].parametros.length;contador++){
-                        tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],"ParametroMain-");
-                        tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],"ParametroMain-");
+                        tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase() ,valoresmetodo[contador],"ParametroMain-");
+                        tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],"ParametroMain-");
                     }
                     ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots,"BloqueLocalPrincipal-", metodos,banderaciclo);
                 }else{
@@ -93,9 +93,9 @@ function GraficaTS(){
       });
     const child = require("child_process");
     child.spawn('cmd',['/c','dot -Tpng ./routes/arbol/TS.dot -o C:/Users/usuario/OneDrive/Escritorio/Imagenes/TS.png'])
-    let imageBuffer = new Buffer("C:/Users/usuario/OneDrive/Escritorio/Imagenes/TS.png", "utf-8")
-    var g = base64.encode(imageBuffer)
-    return "http://127.0.0.1:8887/TS.png"
+    var bitmap = fs.readFileSync("C:/Users/usuario/OneDrive/Escritorio/Imagenes/TS.png");
+    let base = new Buffer.from(bitmap).toString('base64')
+    return base
 }
 
 function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots,ambito, metodos, main){
@@ -258,8 +258,8 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos){
 
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
     if(instruccion.expresion == undefined){
-        var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-        tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+        var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase() , valor,ambito+"Variable",metodos);
+        tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
         if (error == undefined){
             salida = "Error Semantico";
         }
@@ -268,8 +268,8 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
         if (valor == undefined){
             salida = "Error Semantico";
         }else{
-            var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,metodos);
+            var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -280,24 +280,24 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
 function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
     if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
-            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
         }else{
             var auxactual = tslocal.popts();
             if (auxactual.id == undefined){
-                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
                 tslocal.pushts(auxactual);
             }else{
                 tslocal.pushts(auxactual);
-                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
@@ -309,24 +309,24 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
             salida = "Error Semantico";
         }else{
             if (tslocal.lengthts() == 0){
-                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
             }else{
                 var auxactual = tslocal.popts();
                 if (auxactual.id == undefined){
-                    var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                    var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
                     tslocal.pushts(auxactual);
                 }else{
                     tslocal.pushts(auxactual);
-                    var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
-                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
+                    var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
@@ -338,9 +338,9 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
 
 function ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,metodos){
     var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
-    if(tsglobal.obtener(instruccion.identificador)!=undefined){
-        var error =  tsglobal.actualizar(instruccion.identificador, valor,metodos);
-        tsReporte.actualizar(instruccion.identificador, valor,metodos);
+    if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+        var error =  tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
         if (error == undefined){
             salida = "Error Semantico";
         }
@@ -360,9 +360,9 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                 if ((typeof tipots[postipo-1]) == "object"){
                     var auxactual = tslocal.popts();
                     aux.pushts(auxactual);
-                    if(auxactual.obtener(instruccion.identificador)!=undefined){
-                        var error = auxactual.actualizar(instruccion.identificador, valor,metodos);
-                        tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                    if(auxactual.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                        var error = auxactual.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -375,9 +375,9 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                         break;
                     }
                 }else{
-                    if(tslocal.obtener(instruccion.identificador)!=undefined){
-                        var error = tslocal.actualizar(instruccion.identificador, valor,metodos);
-                        tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                    if(tslocal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                        var error = tslocal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -393,18 +393,18 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                 postipo--;
             }
             if (!encontrado){
-                if(tsglobal.obtener(instruccion.identificador)!=undefined){
-                    var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
-                    tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                    var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                    tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
                 }
             }
         }
-        else if(tsglobal.obtener(instruccion.identificador)!=undefined){
-            var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
-            tsReporte.actualizar(instruccion.identificador, valor,metodos);
+        else if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+            var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+            tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -415,7 +415,7 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
 function ejecutarllamada(instruccion, tsglobal, tslocal,tipots,ambito, metodos,banderaciclo){
     var error;
     metodos.forEach(metodo2=>{
-        if(metodo2.identificador==instruccion.identificador){
+        if(metodo2.identificador.toLowerCase() == instruccion.identificador.toLowerCase() ){
             /*Sobrecarga de metodos (NO SE HACE EN ESTE PROYECTO) puede servir en compi2
                 cadena1 = tipo (de todos los identificadores del metodo)
                 cadena2 = tipo (de todos los valores de la llamada)
@@ -438,8 +438,8 @@ function ejecutarllamada(instruccion, tsglobal, tslocal,tipots,ambito, metodos,b
                 var tipots2=[];
                 tipots2.push(".");
                 for(var contador=0;contador<instruccion.parametros.length;contador++){
-                    tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],ambito+"ParametroLlamada");
-                    tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador,valoresmetodo[contador],ambito+"ParametroLlamada");
+                    tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],ambito+"ParametroLlamada");
+                    tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],ambito+"ParametroLlamada");
                 }
                 console.log(tslocal2._simbolos);
                 error = ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots2,ambito, metodos,banderaciclo);
@@ -2116,6 +2116,12 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 
             case TIPO_VALOR.DECIMAL:
                 return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            case TIPO_VALOR.CARACTER:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            case TIPO_VALOR.CADENA:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
                     
             case TIPO_VALOR.BANDERA:
                 return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
@@ -2143,6 +2149,9 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
                 switch(valorDer.tipo){
                     case TIPO_VALOR.DECIMAL:
                         return { tipo:TIPO_DATO.ENTERO, valor: Math.trunc(valorDer.valor) };
+
+                    case TIPO_VALOR.ENTERO:
+                        return { tipo:TIPO_DATO.ENTERO, valor: valorDer.valor };
     
                     case TIPO_VALOR.CARACTER:
                         return { tipo:TIPO_DATO.ENTERO, valor: valorDer.valor.charCodeAt() };
@@ -2159,6 +2168,9 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
                     
                     case TIPO_VALOR.CARACTER:
                         return { tipo:TIPO_DATO.DECIMAL, valor: valorDer.valor.charCodeAt() };
+
+                    case TIPO_VALOR.DECIMAL:
+                        return { tipo:TIPO_DATO.DECIMAL, valor: valorDer.valor };
     
                     default:
                         console.log('Casteo Explicito Invalido');
@@ -2170,6 +2182,9 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
                     case TIPO_VALOR.ENTERO:
                         return { tipo:TIPO_DATO.CARACTER, valor: String.fromCharCode(valorDer.valor) };
 
+                    case TIPO_VALOR.CARACTER:
+                        return { tipo:TIPO_DATO.CARACTER, valor: valorDer.valor };
+
                     default:
                         console.log('Casteo Explicito Invalido');
                         return undefined;
@@ -2177,16 +2192,6 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
 
             case TIPO_VALOR.CADENA:
                 switch(valorDer.tipo){
-
-                    case TIPO_VALOR.ENTERO:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-
-                    case TIPO_VALOR.DECIMAL:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-                    
-                    case TIPO_VALOR.BANDERA:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-    
                     default:
                         console.log('Casteo Explicito Invalido');
                         return undefined;
@@ -2211,20 +2216,9 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
         return { tipo:TIPO_DATO.DECIMAL, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CARACTER){
-        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
-        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
-        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
-        expresion.valor = expresion.valor.replace(/\\"/g,'\"');
-        expresion.valor = expresion.valor.replace(/\\'/g,'\'');
         return { tipo:TIPO_DATO.CARACTER, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CADENA){
-        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
-        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
-        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
-        expresion.valor = expresion.valor.replace(/\\/g,'\'');
-        expresion.valor = expresion.valor.replace(/\\"/g,'\"');
-        expresion.valor = expresion.valor.replace(/\\'/g,'\'');
         return { tipo:TIPO_DATO.CADENA, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.BANDERA){

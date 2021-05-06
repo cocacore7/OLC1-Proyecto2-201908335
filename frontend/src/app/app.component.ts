@@ -15,6 +15,9 @@ import { dependenciesFromGlobalMetadata } from '@angular/compiler/src/render3/r3
 
 import { FormControl, Validators } from '@angular/forms';
 
+export const fs : any = window["fs"];
+export const child : any = window["child_process"];
+
 export interface Tile {
   color: string;
   cols: number;
@@ -34,7 +37,7 @@ export class AppComponent {
 
   selected = new FormControl(0)
   tabs = [
-    { name: 'File1.js', formm: new FormControl(''), codee: '' }
+    { name: 'File1.ty', formm: new FormControl(''), codee: '' }
   ]
 
 
@@ -48,21 +51,15 @@ export class AppComponent {
 
   banderaeditorr = true;
   banderaast = false;
-  banderabloque = false;
   banderasimb = false;
   banderareporteerrores = false;
   banderareportesimbolos = false;
-  banderareportefunciones = false;
-  banderareporteoptimizacion = false;
   simbolos = []
-  optimizaciones = []
-  funciones = []
   cadenaerrores = ''
-  public ts;
 
-  urlimagen = "http://localhost:3000/grafo?a=" + new Date().getTime();
-  urlimagen2 = "http://localhost:3000/grafo2?a=" + new Date().getTime();
-  urlimagen3 = "http://localhost:3000/grafo3?a=" + new Date().getTime();
+  public urlimagen;
+  public urlimagen2;
+  public urlimagen3;
 
   @ViewChild(MonacoEditorComponent, { static: false })
   monacoComponent: MonacoEditorComponent;
@@ -171,8 +168,13 @@ export class AppComponent {
     );
   }
 
+  crear() {
+    var ultimo = this.tabs.length +1
+    this.tabs.unshift({ name: ('File'+ultimo.toString()+'.ty'), formm: new FormControl(''), codee: '' })
+  }
+
   guardar() {
-    fileSaver.saveAs(new Blob([this.editor1.getValue()], { type: "text/plain" }), 'entrada.txt');
+    fileSaver.saveAs(new Blob([this.editor1.getValue()], { type: "text/plain" }), 'entrada.ty');
   }
 
   cerrarpestania() {
@@ -180,7 +182,6 @@ export class AppComponent {
   }
 
   compilar() {
-    this.editor3.setValue('')
     this.editor2.setValue('')
     let formData = new FormData();
     let nombre = "entrada1.txt"
@@ -193,29 +194,9 @@ export class AppComponent {
     })
   }
 
-  optimizar() {
-    this.editor3.setValue('')
-    this.editor2.setValue('')
-    let formData = new FormData();
-    let nombre = "entrada1.txt"
-    formData.append('archivo', new Blob([this.tabs[this.selected.value].formm.value], { type: "text/plain" }), nombre);
-
-    this.http.post('http://localhost:3000/compilar2', formData, { responseType: 'text' }).subscribe(res => {
-      this.editor2.setValue(res.toString())
-      this.http.post('http://localhost:3000/errores', formData, { responseType: 'text' }).subscribe(res => {
-        this.editor3.setValue(res.toString())
-      })
-    })
-  }
-
   regresareditorast() {
     this.banderaeditorr = true;
     this.banderaast = false;
-  }
-
-  regresareditorbloque() {
-    this.banderaeditorr = true;
-    this.banderabloque = false;
   }
 
   regresareditorreporteerrores() {
@@ -228,41 +209,13 @@ export class AppComponent {
     this.banderareportesimbolos = false;
   }
 
-  regresareditorfunciones() {
-    this.banderaeditorr = true;
-    this.banderareportefunciones = false;
-  }
-
-  regresareditoroptimizacion() {
-    this.banderaeditorr = true;
-    this.banderareporteoptimizacion = false;
-  }
-
   reportesimbolos() {
     this.http.get("http://localhost:3000/grafo3?a=" + new Date().getTime(), { responseType: 'text' }).subscribe(res => {
-      this.urlimagen3 = res.toString()
-      this.ts = this.sanitizer.bypassSecurityTrustResourceUrl(res.toString());
-      console.log(this.ts)
+      this.urlimagen3 = "data:image/png;base64,"+res.toString()
       this.banderaeditorr = false;
       this.banderareportesimbolos = true;
     })
     
-  }
-
-  reportefunciones() {
-    this.http.post('http://localhost:3000/funciones', {}, { responseType: 'text' }).subscribe(res => {
-      this.funciones = JSON.parse(res.toString())
-      this.banderaeditorr = false;
-      this.banderareportefunciones = true;
-    })
-  }
-
-  reporteoptimizacion() {
-    this.http.post('http://localhost:3000/optimizaciones', {}, { responseType: 'text' }).subscribe(res => {
-      this.optimizaciones = JSON.parse(res.toString())
-      this.banderaeditorr = false;
-      this.banderareporteoptimizacion = true;
-    })
   }
 
   reporteerrores() {
@@ -274,28 +227,15 @@ export class AppComponent {
   }
 
   reporteast() {
-    //this.banderaeditorr = false;
-    //this.banderaast = true;
-    //this.urlimagen = "http://localhost:3000/grafo?a=" + new Date().getTime();
-    this.editor3.setValue('')
-    this.editor2.setValue('')
     let formData = new FormData();
     let nombre = "entrada1.txt"
 
     formData.append('archivo', new Blob([this.tabs[this.selected.value].formm.value], { type: "text/plain" }), nombre);
     this.http.post("http://localhost:3000/grafo?a=" + new Date().getTime(), formData, { responseType: 'text' }).subscribe((res:any) => {
-      this.urlimagen = res.toString()
-      console.log(this.urlimagen)
+      this.urlimagen = "data:image/png;base64,"+res.toString()
       this.banderaeditorr = false;
       this.banderaast = true;
     })
-    console.log(this.urlimagen)
-  }
-
-  reportebloque() {
-    this.banderaeditorr = false;
-    this.banderabloque = true;
-    this.urlimagen = "http://localhost:3000/grafo2?a=" + new Date().getTime();
   }
 
   fileChanged(files: FileList) {

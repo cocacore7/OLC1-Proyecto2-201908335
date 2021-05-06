@@ -3,6 +3,7 @@
 %lex
 
 %options case-insensitive
+%x str
 
 %%
 
@@ -83,11 +84,26 @@
 "exec"                      return 'exec';
 
 /* Tipos Valores */
-([0-9])+(["."])([0-9])+                     return 'decimall';
-[0-9]+                                      return 'enteroo';
-([a-zA-Z])[a-zA-Z0-9_]*                     return 'identificador';
-\"([^\"]|"\\n"|"\\r"|"\\t")*\"              { yytext = yytext.substr(1, yyleng-2); return 'cadenaa'; }
-\'([^\']|"\\n"|"\\r"|"\\t")?\'              { yytext = yytext.substr(1, yyleng-2); return 'caracterr'; }
+([0-9])+(["."])([0-9])+                                 return 'decimall';
+[0-9]+                                                  return 'enteroo';
+([a-zA-Z])[a-zA-Z0-9_]*                                 return 'identificador';
+["]                                                     {cadena = '';this.begin("str");}
+<str>[^"\\]+                                            {cadena += yytext;}
+<str>"\\\""                                             {cadena += '\"';}
+<str>"\\n"                                              {cadena += '\n';}
+<str>"\\r"                                              {cadena += '\r';}
+<str>"\\t"                                              {cadena += '\t';}
+<str>"\\\\"                                             {cadena += '\\';}
+<str>"\\'"                                             {cadena += '\'';}
+<str>["]                                                {yytext = cadena; this.popState(); return 'cadenaa'; }
+[\']("\\n"|"\\r"|"\\t"|"\\'"|"\\\""|"\\\\"|[^\'])[\']   { yytext = yytext.substring(1, yytext.length-1);
+                                                        yytext = yytext.replace(/\\n/g,'\n');
+                                                        yytext = yytext.replace(/\\r/g,'\r');
+                                                        yytext = yytext.replace(/\\t/g,'\t');
+                                                        yytext = yytext.replace(/\\\'/g,'\'');
+                                                        yytext = yytext.replace(/\\\"/g,'\"');
+                                                        yytext = yytext.replace(/\\\\/g,'\\');
+                                                        return 'caracterr'; }            
 
 <<EOF>>                 return 'EOF';
 
@@ -100,13 +116,14 @@
     const TIPO_VALOR = require('../arbol/instrucciones').TIPO_VALOR;
     const INSTRUCCIONES = require('../arbol/instrucciones').INSTRUCCIONES;
     const TIPO_DATO = require('../arbol/tablasimbolos').TIPO_DATO;
+    var cadena = "";
 %}
 
 // Precedencia de operadores
 
 %left  'or'
 %left  'and'
-%rigth 'not'
+%right 'not'
 %left  'menor' 'menorigual' 'mayor' 'mayorigual' 'igualigual' 'noigual'
 %left  'incremento' 'decremento' 'mas' 'menos' 
 %left  'por' 'dividido' 'modulo'

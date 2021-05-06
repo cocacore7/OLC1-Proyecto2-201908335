@@ -38,8 +38,39 @@ let cantif = 0
 let cantswitch = 0
 let operando = 0
 let metodo = 0
+let caso = false
 
 function GrafoArbol(arbol){
+    expresionpro = 0
+    asignacion = 0
+    declaracion = 0
+    parametro = 0
+    llamada = 0
+    imprimirr = 0
+    iff = 0
+    condicioniff = 0
+    cuerpoiff = 0
+    switchh = 0
+    casoswitchh = 0
+    defaultswitchh = 0
+    cuerpocasoswitchh = 0
+    whilee =0
+    condicionwhilee =0
+    cuerpowhilee =0
+    dowhilee=0
+    condiciondowhilee =0
+    cuerpodowhilee =0
+    forr = 0
+    condicionforr = 0
+    cuerpoforr = 0
+    breakk = 0
+    continuee = 0
+    returnn = 0
+    cantif = 0
+    cantswitch = 0
+    operando = 0
+    metodo = 0
+    caso = false
     tsReporte = new TS([]);
     salida='';
     let tsglobal = new TS([]);
@@ -49,6 +80,7 @@ function GrafoArbol(arbol){
     let banderaciclo = [];
     let tipots = []
     let padre = "raiz"
+    grafoarbol = ""
     grafoarbol = "digraph G { \n"
     grafoarbol += "raiz[label=\"Raiz\",style=\"filled\", fillcolor=\"red:white\"];\n"
     ejecutarbloqueglobal(arbol, tsglobal, tslocal,tipots,"BloqueGlobal-", metodos, main,padre);
@@ -120,7 +152,6 @@ function GrafoArbol(arbol){
         salida = "Error Semantico"
     }
     grafoarbol += "}\n"
-    console.log(grafoarbol)
     fs.readFile('./routes/arbol/Arbol.dot', 'utf8', function(err, data) {
         if (err) {
           return console.log(err);
@@ -133,7 +164,9 @@ function GrafoArbol(arbol){
       });
     const child = require("child_process");
     child.spawn('cmd',['/c','dot -Tpng ./routes/arbol/Arbol.dot -o C:/Users/usuario/OneDrive/Escritorio/Imagenes/Arbol.png'])
-    return "C:/Users/usuario/OneDrive/Escritorio/Imagenes/Arbol.png";
+    var bitmap = fs.readFileSync("C:/Users/usuario/OneDrive/Escritorio/Imagenes/Arbol.png");
+    let base = new Buffer.from(bitmap).toString('base64')
+    return base;
 }
 
 
@@ -189,8 +222,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,padr
             ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,padre,metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.IFF){
-            if (banderaciclo.length == 0){
-                var tslocal2=new TS([]);
+            var tslocal2=new TS([]);
                 tslocal.pushts(tslocal2)
                 tipots.push(["If"]);
                 var posible = ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueIF-",padre,banderaciclo);
@@ -201,20 +233,6 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,padr
                 }
                 tipots.pop();
                 tslocal.popts();
-            }else{
-                iff++
-                var tslocal2=new TS([]);
-                tslocal.pushts(tslocal2)
-                tipots.push(["If"]);
-                var posible = ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito+"BloqueIF-",padre,banderaciclo);
-                if(posible){
-                    tslocal.popts();
-                    tipots.pop();
-                    return posible;
-                }
-                tipots.pop();
-                tslocal.popts();
-            }
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.SWITCHH){
             if (cantswitch == 0){
@@ -327,8 +345,7 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,padr
                 }
                 tipots.pop();
                 tslocal.popts();
-            }
-            
+                }
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.BREAK){
             grafoarbol += "break"+breakk.toString()+"[label=\"Instruccion BREAK\",style=\"filled\", fillcolor=\"red\"];\n"
@@ -341,11 +358,18 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,padr
                     resultado: undefined
                 }
             }else{
-                salida = "Error Semantico";
-                console.log("No puede haber un break sin un ciclo")
-                return{
-                    tipo_resultado: TIPO_INSTRUCCION.ERRORR,
-                    resultado: "No puede haber un continue sin un ciclo"
+                if(caso){
+                    return{
+                        tipo_resultado: TIPO_INSTRUCCION.BREAK,
+                        resultado: undefined
+                    }
+                }else{
+                    salida = "Error Semantico";
+                    console.log("No puede haber un break sin un ciclo")
+                    return{
+                        tipo_resultado: TIPO_INSTRUCCION.ERRORR,
+                        resultado: "No puede haber un continue sin un ciclo"
+                    }
                 }
             }
         }
@@ -612,8 +636,8 @@ function ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito,padre,banderaci
         grafoarbol += padre+"->"+"if"+iff.toString()+";\n"
         grafoarbol += "condicionif"+condicioniff.toString()+"[label=\"Condicion IF\"];\n"
         grafoarbol += "if"+iff.toString()+"->"+"condicionif"+condicioniff.toString()+";\n"
-        var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionif"+condicioniff.toString(),metodos);
         condicioniff++
+        var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionif"+(condicioniff-1).toString(),metodos);
         if (valor == undefined){
             salida = "Error Semantico";
         }else{
@@ -649,8 +673,9 @@ function ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito,padre,banderaci
         grafoarbol += padre+"->"+"if"+iff.toString()+";\n"
         grafoarbol += "condicionif"+condicioniff.toString()+"[label=\"Condicion ELSE IF\"];\n"
         grafoarbol += "if"+iff.toString()+"->"+"condicionif"+condicioniff.toString()+";\n"
-        var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,padre,metodos);
         condicioniff++
+        var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionif"+(condicioniff-1).toString(),metodos);
+
         if (valor == undefined){
             salida = "Error Semantico";
         }else{
@@ -674,7 +699,7 @@ function ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito,padre,banderaci
                 }
             }else{
                 grafoarbol += "cuerpoif"+cuerpoiff.toString()+"[label=\"Cuerpo ELSE IF\"];\n"
-                grafoarbol += padre+"->"+"cuerpoif"+cuerpoiff.toString()+";\n"
+                grafoarbol += "if"+iff.toString()+"->"+"cuerpoif"+cuerpoiff.toString()+";\n"
                 iff++
                 cuerpoiff++
                 ejecutarbloquelocal(instruccion.cuerpoverdadero,tsglobal,tslocal,tipots,ambito,"cuerpoif"+(cuerpoiff-1).toString(),metodos,banderaciclo);
@@ -686,11 +711,14 @@ function ejecutarif(instruccion, tsglobal, tslocal,tipots,ambito,padre,banderaci
 }
 
 function ejecutarswitch(instruccion, tsglobal, tslocal,tipots,ambito,padre,metodos,banderaciclo){
-    var valor = procesarexpresion(instruccion.identificador,tsglobal, tslocal,tipots,metodos);
+    caso = true;
+    var valor = procesarexpresion(instruccion.identificador,tsglobal, tslocal,tipots,padre,metodos);
     if (valor == undefined){
+        caso = false
         salida = "Error Semantico";
     }else{
         ejecutarcase(valor,instruccion.casos,tsglobal,tslocal,tipots,ambito,padre,metodos,banderaciclo);
+        caso = false
     }
 }
 
@@ -700,10 +728,8 @@ function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,ambito
         grafoarbol += padre+"->"+"casoDefault"+defaultswitchh.toString()+";\n"
         ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,ambito+"CuerpoDefault-","casoDefault"+defaultswitchh.toString(),metodos,banderaciclo);
         defaultswitchh++
+        return;
     }
-    grafoarbol += "condicioncasoSwitch"+casoswitchh.toString()+"[label=\"Condicion Caso Switch\"];\n"
-    grafoarbol += padre+"->"+"casoSwitch"+casoswitchh.toString()+";\n"
-    casoswitchh++
     var valor = procesarexpresion(instruccion.caso,tsglobal, tslocal,tipots,"condicioncasoSwitch"+casoswitchh.toString(),metodos);
     if (valor == undefined){
         salida = "Error Semantico";
@@ -747,29 +773,41 @@ function ejecutarwhile(instruccion, tsglobal, tslocal,tipots,ambito,padre,metodo
             tslocal.popts();
             tipots.pop();
         }
-        
     }
     banderaciclo.pop();
 }
 
 function ejecutardowhile(instruccion, tsglobal, tslocal, tipots,ambito,padre,metodos,banderaciclo){
     banderaciclo.push(".");
-    grafoarbol += "condicionwhile"+condiciondowhilee.toString()+"[label=\"Condicion While\"];\n"
-    grafoarbol += padre+"->"+"condicionwhile"+condiciondowhilee.toString()+";\n"
-    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionwhile"+condiciondowhilee.toString(),metodos);
+    grafoarbol += "condiciondowhile"+condiciondowhilee.toString()+"[label=\"Condicion Do While\"];\n"
+    grafoarbol += padre+"->"+"condiciondowhile"+condiciondowhilee.toString()+";\n"
+    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condiciondowhile"+condiciondowhilee.toString(),metodos);
     condiciondowhilee++
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
-        grafoarbol += "cuerpowhile"+cuerpodowhilee.toString()+"[label=\"Cuerpo While\"];\n"
-        grafoarbol += padre+"->"+"cuerpowhile"+cuerpodowhilee.toString()+";\n"
-        var tslocal2=new TS([]);
-        tslocal.pushts(tslocal2);
-        tipots.push(["DoWhile"]);
-        ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,"cuerpowhile"+cuerpodowhilee.toString(),metodos,banderaciclo);
-        cuerpodowhilee++
-        tslocal.popts();
-        tipots.pop();
+        if (banderaciclo.length == 1){
+            grafoarbol += "cuerpodowhilee"+cuerpodowhilee.toString()+"[label=\"Cuerpo Do While\"];\n"
+            grafoarbol += padre+"->"+"cuerpodowhilee"+cuerpodowhilee.toString()+";\n"
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["DoWhile"]);
+            ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,"cuerpodowhilee"+cuerpodowhilee.toString(),metodos,banderaciclo);
+            cuerpodowhilee++
+            tslocal.popts();
+            tipots.pop();
+        }else{
+            cuerpodowhilee++
+            grafoarbol += "cuerpodowhilee"+cuerpodowhilee.toString()+"[label=\"Cuerpo Do While\"];\n"
+            grafoarbol += padre+"->"+"cuerpodowhilee"+cuerpodowhilee.toString()+";\n"
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["DoWhile"]);
+            ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,"cuerpodowhilee"+cuerpodowhilee.toString(),metodos,banderaciclo);
+            cuerpodowhilee++
+            tslocal.popts();
+            tipots.pop();
+        }
     }
     banderaciclo.pop();
 }
@@ -784,20 +822,34 @@ function ejecutarfor(instruccion, tsglobal, tslocal, tipots,ambito,padre, metodo
     }
     grafoarbol += "condicionfor"+condicionforr.toString()+"[label=\"Condicion For\"];\n"
     grafoarbol += padre+"->"+"condicionfor"+condicionforr.toString()+";\n"
-    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionfor"+condicionforr.toString(),metodos);
     condicionforr++
+    var valor = procesarexpresion(instruccion.condicion,tsglobal, tslocal,tipots,"condicionfor"+(condicionforr-1).toString(),metodos);
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
-        grafoarbol += "cuerpofor"+cuerpoforr.toString()+"[label=\"Cuerpo For\"];\n"
-        grafoarbol += padre+"->"+"cuerpofor"+cuerpoforr.toString()+";\n"
-        var tslocal2=new TS([]);
-        tslocal.pushts(tslocal2);
-        tipots.push(["FOR"]);
-        ejecutarbloquelocal(instruccion.instrucciones,tsglobal,tslocal,tipots,ambito,"cuerpofor"+cuerpoforr.toString(),metodos,banderaciclo);
-        cuerpoforr++
-        tslocal.popts();
-        tipots.pop();
+        if (banderaciclo.length == 1){
+            grafoarbol += "cuerpofor"+cuerpoforr.toString()+"[label=\"Cuerpo For\"];\n"
+            grafoarbol += padre+"->"+"cuerpofor"+cuerpoforr.toString()+";\n"
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["FOR"]);
+            cuerpoforr++
+            ejecutarbloquelocal(instruccion.cuerpoFor,tsglobal,tslocal,tipots,ambito,"cuerpofor"+(cuerpoforr-1).toString(),metodos,banderaciclo); 
+            tslocal.popts();
+            tipots.pop();
+        }else{
+            cuerpoforr++
+            grafoarbol += "cuerpofor"+cuerpoforr.toString()+"[label=\"Cuerpo For\"];\n"
+            grafoarbol += padre+"->"+"cuerpofor"+cuerpoforr.toString()+";\n"
+            var tslocal2=new TS([]);
+            tslocal.pushts(tslocal2);
+            tipots.push(["FOR"]);
+            ejecutarbloquelocal(instruccion.cuerpoFor,tsglobal,tslocal,tipots,ambito,"cuerpofor"+cuerpoforr.toString(),metodos,banderaciclo);
+            cuerpoforr++
+            tslocal.popts();
+            tipots.pop();
+        }
+        
     }
     banderaciclo.pop();
 }
@@ -808,10 +860,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"suma"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"suma"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"+\"];\n"
         grafoarbol += "suma"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"suma"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"suma"+temporal.toString(), metodos);
         
         //ENTERO
@@ -916,10 +968,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"incremento"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"incremento"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"++\"];\n"
         grafoarbol += "incremento"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"incremento"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO){
             return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor+1 };
@@ -940,10 +992,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"resta"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"resta"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"-\"];\n"
         grafoarbol += "resta"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"resta"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"resta"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO && valorDer.tipo == TIPO_DATO.ENTERO){
@@ -1015,10 +1067,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"decremento"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"decremento"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"--\"];\n"
         grafoarbol += "decremento"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"decremento"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO){
             return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor-1 };
@@ -1039,10 +1091,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"multi"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"multi"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"*\"];\n"
         grafoarbol += "multi"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"multi"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"multi"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO && valorDer.tipo == TIPO_DATO.ENTERO){
@@ -1084,10 +1136,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"division"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"division"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"/\"];\n"
         grafoarbol += "division"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"division"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"division"+temporal.toString(), metodos);
         
         //DIVISIONES ENTRE 0
@@ -1145,10 +1197,10 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"potencia"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"potencia"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"^\"];\n"
         grafoarbol += "potencia"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"potencia"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"potencia"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO && valorDer.tipo == TIPO_DATO.ENTERO){
@@ -1176,10 +1228,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"modulo"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"modulo"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"%\"];\n"
         grafoarbol += "modulo"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"modulo"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"modulo"+temporal.toString(), metodos);
         //ENTERO
         if(valorIzq.tipo == TIPO_DATO.ENTERO && valorDer.tipo == TIPO_DATO.ENTERO){
@@ -1207,11 +1260,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"negativo"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"negativo"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"-\"];\n"
         grafoarbol += "negativo"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"negativo"+temporal.toString(), metodos);
+        
         if(valorIzq.tipo == TIPO_DATO.ENTERO){
             return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor*-1 };
         }
@@ -1228,10 +1281,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"menor"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"menor"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"<\"];\n"
         grafoarbol += "menor"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"menor"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"menor"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -1398,10 +1452,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"mayor"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"mayor"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\">\"];\n"
         grafoarbol += "mayor"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"mayor"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"mayor"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -1555,10 +1610,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"menorigual"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"menorigual"+temporal.toString(),metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"<=\"];\n"
         grafoarbol += "menorigual"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"menorigual"+temporal.toString(),metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"menorigual"+temporal.toString(),metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -1728,10 +1784,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"mayorigual"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"mayorigual"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\">=\"];\n"
         grafoarbol += "mayorigual"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"mayorigual"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"mayorigual"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -1901,10 +1958,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"igualigual"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"igualigual"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"==\"];\n"
         grafoarbol += "igualigual"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"igualigual"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"igualigual"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -2010,10 +2068,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"noigual"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"noigual"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"!=\"];\n"
         grafoarbol += "noigual"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"noigual"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"noigual"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.ENTERO:
@@ -2118,10 +2177,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"or"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"or"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"||\"];\n"
         grafoarbol += "or"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"or"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"or"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.BANDERA:
@@ -2153,10 +2213,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"and"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
+        
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"and"+temporal.toString(), metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"&&\"];\n"
         grafoarbol += "and"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"and"+temporal.toString(), metodos);
         var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"and"+temporal.toString(), metodos);
         switch(valorIzq.tipo){
             case TIPO_DATO.BANDERA:
@@ -2188,10 +2249,11 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         grafoarbol += padre+"->"+"not"+expresionpro.toString()+";\n"
         var temporal = expresionpro
         expresionpro++
-        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"not"+temporal.toString(),metodos);
         grafoarbol += "operando"+operando.toString()+"[label=\"!\"];\n"
         grafoarbol += "not"+temporal+"->"+"operando"+operando.toString()+";\n"
         operando++
+        var valorIzq = procesarexpresion(expresion.operandoIzq, tsglobal, tslocal, tipots,"not"+temporal.toString(),metodos);
+        
         switch(valorIzq.tipo){
             case TIPO_DATO.BANDERA:
                 if (valorIzq.valor == true){
@@ -2313,6 +2375,12 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
 
             case TIPO_VALOR.DECIMAL:
                 return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            case TIPO_VALOR.CARACTER:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
+
+            case TIPO_VALOR.CADENA:
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
                     
             case TIPO_VALOR.BANDERA:
                 return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor.toString() };
@@ -2382,16 +2450,6 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
 
             case TIPO_VALOR.CADENA:
                 switch(valorDer.tipo){
-
-                    case TIPO_VALOR.ENTERO:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-
-                    case TIPO_VALOR.DECIMAL:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-                    
-                    case TIPO_VALOR.BANDERA:
-                        return { tipo:TIPO_DATO.CADENA, valor: valorDer.valor.toString() };
-    
                     default:
                         console.log('Casteo Explicito Invalido');
                         return undefined;
@@ -2405,15 +2463,16 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         expresionpro++
         var condicion = procesarexpresion(expresion.condicion, tsglobal, tslocal, tipots,"ternario"+temporal.toString(), metodos);
         if(condicion.valor == true){
-            grafoarbol += "operando"+operando.toString()+"[label=\"?\"];\n"
-            grafoarbol += "ternario"+temporal+"->"+"operando"+operando.toString()+";\n"
-            operando++
 
             grafoarbol += "valverdadero"+expresionpro.toString()+"[label=\"Operacion VALOR VERDADERO\"];\n"
             grafoarbol += padre+"->"+"valverdadero"+expresionpro.toString()+";\n"
             temporal = expresionpro
             expresionpro++
             var resultado= procesarexpresion(expresion.valverdadero, tsglobal, tslocal, tipots,"valverdadero"+temporal.toString(), metodos);
+
+            grafoarbol += "operando"+operando.toString()+"[label=\"?\"];\n"
+            grafoarbol += "ternario"+temporal+"->"+"operando"+operando.toString()+";\n"
+            operando++
 
             grafoarbol += "valfalso"+expresionpro.toString()+"[label=\"Operacion VALOR FALSO\"];\n"
             grafoarbol += padre+"->"+"valfalso"+expresionpro.toString()+";\n"
@@ -2422,16 +2481,16 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
             return resultado;
         }
         else if(condicion.valor == false){
-            grafoarbol += "operando"+operando.toString()+"[label=\"?\"];\n"
-            grafoarbol += "ternario"+temporal+"->"+"operando"+operando.toString()+";\n"
-            operando++
-
             grafoarbol += "valfalso"+expresionpro.toString()+"[label=\"Operacion VALOR FALSO\"];\n"
             grafoarbol += padre+"->"+"valfalso"+expresionpro.toString()+";\n"
             temporal = expresionpro
             expresionpro++
             var resultado= procesarexpresion(expresion.valfalso, tsglobal, tslocal, tipots,"valfalso"+temporal.toString(), metodos);
             
+            grafoarbol += "operando"+operando.toString()+"[label=\"?\"];\n"
+            grafoarbol += "ternario"+temporal+"->"+"operando"+operando.toString()+";\n"
+            operando++
+
             grafoarbol += "valverdadero"+expresionpro.toString()+"[label=\"Operacion VALOR VERDADERO\"];\n"
             grafoarbol += padre+"->"+"valverdadero"+expresionpro.toString()+";\n"
             expresionpro++
@@ -2440,44 +2499,68 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         }
     }
     else if(expresion.tipo == TIPO_VALOR.ENTERO){
-        grafoarbol += "entero"+expresionpro.toString()+"[label=\"VALOR ENTERO\"];\n"
-        grafoarbol += padre+"->"+"entero"+expresionpro.toString()+";\n"
-        expresionpro++
+        if (padre != undefined){
+            grafoarbol += "entero"+expresionpro.toString()+"[label=\"VALOR ENTERO\"];\n"
+            grafoarbol += padre+"->"+"entero"+expresionpro.toString()+";\n"
+            expresionpro++
+        }
+        if(expresion.valor != undefined){
+            grafoarbol += "entero"+expresionpro.toString()+"[label=\""+expresion.valor+"\"];\n"
+            grafoarbol += "entero"+(expresionpro-1).toString()+"->"+"entero"+(expresionpro).toString()+";\n"
+            expresionpro++
+        }
         return { tipo:TIPO_DATO.ENTERO, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.DECIMAL){
-        grafoarbol += "decimal"+expresionpro.toString()+"[label=\"VALOR DECIMAL\"];\n"
-        grafoarbol += padre+"->"+"decimal"+expresionpro.toString()+";\n"
-        expresionpro++
+        if (padre != undefined){
+            grafoarbol += "decimal"+expresionpro.toString()+"[label=\"VALOR DECIMAL\"];\n"
+            grafoarbol += padre+"->"+"decimal"+expresionpro.toString()+";\n"
+            expresionpro++
+        }
+        if(expresion.valor != undefined){
+            grafoarbol += "decimal"+expresionpro.toString()+"[label=\""+expresion.valor+"\"];\n"
+            grafoarbol += "decimal"+(expresionpro-1).toString()+"->"+"decimal"+(expresionpro).toString()+";\n"
+            expresionpro++
+        }
         return { tipo:TIPO_DATO.DECIMAL, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CARACTER){
-        grafoarbol += "caracter"+expresionpro.toString()+"[label=\"VALOR CARACTER\"];\n"
-        grafoarbol += padre+"->"+"caracter"+expresionpro.toString()+";\n"
-        expresionpro++
-        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
-        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
-        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
-        //expresion.valor = expresion.valor.replace(/\\"/g,'\"');
-        //expresion.valor = expresion.valor.replace(/\\'/g,'\'');
+        if (padre != undefined){
+            grafoarbol += "caracter"+expresionpro.toString()+"[label=\"VALOR CARACTER\"];\n"
+            grafoarbol += padre+"->"+"caracter"+expresionpro.toString()+";\n"
+            expresionpro++
+        }
+        if(expresion.valor != undefined){
+            grafoarbol += "caracter"+expresionpro.toString()+"[label=\""+expresion.valor+"\"];\n"
+            grafoarbol += "caracter"+(expresionpro-1).toString()+"->"+"caracter"+(expresionpro).toString()+";\n"
+            expresionpro++
+        }
         return { tipo:TIPO_DATO.CARACTER, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.CADENA){
-        grafoarbol += "cadena"+expresionpro.toString()+"[label=\"VALOR CADENA\"];\n"
-        grafoarbol += padre+"->"+"cadena"+expresionpro.toString()+";\n"
-        expresionpro++
-        expresion.valor = expresion.valor.replace(/\\n/g,'\n');
-        expresion.valor = expresion.valor.replace(/\\r/g,'\r');
-        expresion.valor = expresion.valor.replace(/\\t/g,'\t');
-        //expresion.valor = expresion.valor.replace(/\\/g,'\'');
-        //expresion.valor = expresion.valor.replace(/\\"/g,'\"');
-        //expresion.valor = expresion.valor.replace(/\\'/g,'\'');
+        if (padre != undefined){
+            grafoarbol += "cadena"+expresionpro.toString()+"[label=\"VALOR CADENA\"];\n"
+            grafoarbol += padre+"->"+"cadena"+expresionpro.toString()+";\n"
+            expresionpro++
+        }
+        if(expresion.valor != undefined){
+            grafoarbol += "cadena"+expresionpro.toString()+"[label=\""+expresion.valor+"\"];\n"
+            grafoarbol += "cadena"+(expresionpro-1).toString()+"->"+"cadena"+(expresionpro).toString()+";\n"
+            expresionpro++
+        }
         return { tipo:TIPO_DATO.CADENA, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.BANDERA){
-        grafoarbol += "bandera"+expresionpro.toString()+"[label=\"VALOR BOOLEANO\"];\n"
-        grafoarbol += padre+"->"+"bandera"+expresionpro.toString()+";\n"
-        expresionpro++
+        if (padre != undefined){
+            grafoarbol += "bandera"+expresionpro.toString()+"[label=\"VALOR BANDERA\"];\n"
+            grafoarbol += padre+"->"+"bandera"+expresionpro.toString()+";\n"
+            expresionpro++
+        }
+        if(expresion.valor != undefined){
+            grafoarbol += "bandera"+expresionpro.toString()+"[label=\""+expresion.valor+"\"];\n"
+            grafoarbol += "bandera"+(expresionpro-1).toString()+"->"+"bandera"+(expresionpro).toString()+";\n"
+            expresionpro++
+        }
         return { tipo:TIPO_DATO.BANDERA, valor: expresion.valor}
     }
     else if(expresion.tipo == TIPO_VALOR.IDENTIFICADOR){
@@ -2516,7 +2599,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
                 }
                 postipo--;
             }
-            valorr = tsglobal.obtener(expresion.valor);
+            var valorr = tsglobal.obtener(expresion.valor);
             if(valorr){
                 let final = aux.lengthts();
                 while(final != 0){

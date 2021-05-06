@@ -4,10 +4,6 @@
     width: 100%;
   }
 
-  .ngx-monaco-editor2 {
-    height: 180px;
-    width: 100%;
-  }
   .column {
     float: left;
     width: 50%;
@@ -19,7 +15,7 @@
     clear: both;
   }
 
-  body {margin: 0; height: 100%; overflow-y:scroll; }
+  body {margin: 0; height: 100%; overflow-y:scroll;}
 
   table {
     font-family: arial, sans-serif;

@@ -6,7 +6,6 @@ router.get('/', function(req, res, next) {
     let salida="";
     try {
         salida = GraficaTS();
-        console.log(salida)
         res.send(salida);
         res.statusCode = 200;
     }

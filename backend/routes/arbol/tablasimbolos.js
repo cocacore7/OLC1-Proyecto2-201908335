@@ -35,20 +35,20 @@ class TS {
         this._simbolos = this._simbolos.concat(simbolos);
     }
     agregar(tipo, id, valor,ambito){
-        var simbolo = this._simbolos.filter((simbolo)=>simbolo.id==id)[0];
+        var simbolo = this._simbolos.filter((simbolo)=>simbolo.id.toLowerCase()== id.toLowerCase())[0];
         if(simbolo){
             //Manejan si no existe variable
             //console.log('La variable ya existe');
-            return ""
+            return undefined
         }
         else{
             if (valor == undefined){
-                this._simbolos.push(crearSimbolo(tipo, id, undefined,ambito));
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), undefined,ambito));
                 return ""
             }
             else if (tipo == valor.tipo){
                 //Si hay casteos implicitos aca los verifican
-                this._simbolos.push(crearSimbolo(tipo, id, valor.valor,ambito));
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito));
                 return ""
             }else{
                 //Manejan si el casteo no existe
@@ -57,15 +57,15 @@ class TS {
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.DECIMAL:
-                                this._simbolos.push(crearSimbolo(tipo, id, Math.trunc(valor.valor),ambito));
+                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), Math.trunc(valor.valor,ambito)));
                                 return "";
 
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
-                                    this._simbolos.push(crearSimbolo(tipo, id, 1),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito));
                                 }
                                 else if (valor.valor==false){
-                                    this._simbolos.push(crearSimbolo(tipo, id, 0),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito));
                                 }
                                 return "";
 
@@ -77,15 +77,15 @@ class TS {
                     case TIPO_VALOR.DECIMAL:
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
-                                this._simbolos.push(crearSimbolo(tipo, id, valor.valor),ambito);
+                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito));
                                 return "";
             
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
-                                    this._simbolos.push(crearSimbolo(tipo, id, 1),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito));
                                 }
                                 else if (valor.valor==false){
-                                    this._simbolos.push(crearSimbolo(tipo, id, 0),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito));
                                 }
                                 return "";
 
@@ -96,11 +96,6 @@ class TS {
     
                     case TIPO_VALOR.CARACTER:
                         switch(valor.tipo){
-                            
-                            case TIPO_VALOR.CADENA:
-                                this._simbolos.push(crearSimbolo(tipo, id, valor.valor),ambito);
-                                return "";
-            
                             default:
                                 console.log('No se pudo castear implicitamente por tipos incompatibles');
                                 return undefined;
@@ -108,10 +103,6 @@ class TS {
     
                     case TIPO_VALOR.CADENA:
                         switch(valor.tipo){
-                            
-                            case TIPO_VALOR.CARACTER:
-                                this._simbolos.push(crearSimbolo(tipo, id, valor.valor),ambito);
-                                return "";
             
                             default:
                                 console.log('No se pudo castear implicitamente por tipos incompatibles');
@@ -122,9 +113,9 @@ class TS {
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
                                 if (valor.valor == 1){
-                                    this._simbolos.push(crearSimbolo(tipo, id, true),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito));
                                 }else if (valor.valor == 0){
-                                    this._simbolos.push(crearSimbolo(tipo, id, false),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito));
                                 }else{
                                     console.log('No se pudo castear implicitamente por tipos incompatibles');
                                     return undefined;
@@ -133,9 +124,9 @@ class TS {
                             
                             case TIPO_VALOR.DECIMAL:
                                 if (valor.valor == 1){
-                                    this._simbolos.push(crearSimbolo(tipo, id, true),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito));
                                 }else if (valor.valor == 0){
-                                    this._simbolos.push(crearSimbolo(tipo, id, false),ambito);
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito));
                                 }else{
                                     console.log('No se pudo castear implicitamente por tipos incompatibles');
                                     return undefined;
@@ -151,7 +142,7 @@ class TS {
         }
     }
     obtener(id){
-        var simbolo = this._simbolos.filter((simbolo)=>simbolo.id==id)[0];
+        var simbolo = this._simbolos.filter((simbolo)=> simbolo.id.toLowerCase()==id.toLowerCase())[0];
         if(simbolo){
             return simbolo;
         }
@@ -162,7 +153,7 @@ class TS {
         }
     }
     actualizar(id, valor){
-        var simbolo = this._simbolos.filter(simbolo=>simbolo.id == id)[0];
+        var simbolo = this._simbolos.filter(simbolo=>simbolo.id.toLowerCase()  == id.toLowerCase())[0];
         if(simbolo){
             if(simbolo.tipo == valor.tipo){
                 simbolo.valor=valor.valor;
@@ -231,11 +222,6 @@ class TS {
     
                     case TIPO_VALOR.CARACTER:
                         switch(valor.tipo){
-                            
-                            case TIPO_VALOR.CADENA:
-                                simbolo.valor=valor.valor;
-                                return "";
-            
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
                                 return undefined;
@@ -243,11 +229,6 @@ class TS {
     
                     case TIPO_VALOR.CADENA:
                         switch(valor.tipo){
-                            
-                            case TIPO_VALOR.CARACTER:
-                                simbolo.valor=valor.valor;
-                                return "";
-            
                             default:
                                 console.log('No se pudo actualizar por tipos incompatibles');
                                 return undefined;
@@ -302,24 +283,3 @@ class TS {
 
 module.exports.TIPO_DATO = TIPO_DATO;
 module.exports.TS = TS;
-
-/*
-    Guia para tablas
-    int b=0;
-    int a=1;
-    if(true){
-    int a=0;
-    }
-    int a=0;
-    
-    ts = new ts([]);
-    //ts->se creo a y b
-    ejecutarif(ts);
-    ejecutarif(ts){
-        tsif = new ts(ts);
-        //tsif -> ya incluye a y b; 
-    }
-
-    decimal a <- 3.5;
-    cout << a;
-*/
