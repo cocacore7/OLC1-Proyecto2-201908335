@@ -57,7 +57,7 @@ class TS {
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.DECIMAL:
-                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), Math.trunc(valor.valor,ambito)));
+                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), Math.trunc(valor.valor),ambito));
                                 return "";
 
                             case TIPO_VALOR.BANDERA:

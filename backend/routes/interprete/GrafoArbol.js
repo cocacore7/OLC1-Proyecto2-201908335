@@ -71,7 +71,6 @@ function GrafoArbol(arbol){
     operando = 0
     metodo = 0
     caso = false
-    tsReporte = new TS([]);
     salida='';
     let tsglobal = new TS([]);
     let tslocal = new TS([]);
@@ -736,8 +735,12 @@ function ejecutarcase(identificador,instruccion, tsglobal, tslocal,tipots,ambito
     }else{
         grafoarbol += "casoSwitch"+cuerpocasoswitchh.toString()+"[label=\"Caso Switch\"];\n"
         grafoarbol += padre+"->"+"casoSwitch"+cuerpocasoswitchh.toString()+";\n"
-        ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,ambito+"CuerpoCaso-","casoSwitch"+cuerpocasoswitchh.toString(),metodos,banderaciclo);
         cuerpocasoswitchh++
+        grafoarbol += "condicioncasoSwitch"+casoswitchh.toString()+"[label=\"Condicion Caso Switch\",style=\"filled\", fillcolor=\"green:blue\"];\n"
+        grafoarbol += "casoSwitch"+(cuerpocasoswitchh-1).toString()+"->"+"condicioncasoSwitch"+casoswitchh.toString()+";\n"
+        casoswitchh++
+        ejecutarbloquelocal(instruccion.cuerpocaso,tsglobal,tslocal,tipots,ambito+"CuerpoCaso-","casoSwitch"+(cuerpocasoswitchh-1).toString(),metodos,banderaciclo);
+        
         ejecutarcase(identificador,instruccion.masCasos[0],tsglobal,tslocal,tipots,ambito,padre,metodos,banderaciclo);
     }
 }

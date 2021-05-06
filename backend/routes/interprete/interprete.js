@@ -61,8 +61,7 @@ function ejecutar(arbol){
 function GraficaTS(){
     let grafo = ""
     grafo = "digraph G { bgcolor=\"yellow:red\"\n"
-    grafo += "subgraph cluster1 {fillcolor=\"blue:green\" style=\"filled\"\n"
-    grafo += "node [shape=record fillcolor=\"gold:brown\" style=\"radial\" gradientangle=180]\n"
+    grafo += "node [shape=filled];\n"
     grafo += "a0 [label=<\n"
     grafo += "<TABLE border=\"10\" cellspacing=\"10\" cellpadding=\"10\" style=\"rounded\" bgcolor=\"/rdylgn11/1:/rdylgn11/11\" gradientangle=\"315\">\n"
     grafo += "<TR>\n"
@@ -80,7 +79,7 @@ function GraficaTS(){
         grafo += "</TR>\n"
     }
     grafo += "</TABLE>>];\n"
-    grafo += "}}\n"
+    grafo += "}\n"
     fs.readFile('./routes/arbol/TS.dot', 'utf8', function(err, data) {
         if (err) {
           return console.log(err);
@@ -269,7 +268,7 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
             salida = "Error Semantico";
         }else{
             var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
