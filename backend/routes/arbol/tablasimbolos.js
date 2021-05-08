@@ -31,6 +31,26 @@ function crearSimbolo(tipo, id, valor,ambito,linea,columna){
         columna = columna + 7
     }else if (tipo == "VAL_BANDERA"){
         columna = columna + 9
+    }else if (tipo == "VAL_VECTORE"){
+        columna = columna + 6
+    }else if (tipo == "VAL_VECTORD"){
+        columna = columna + 9
+    }else if (tipo == "VAL_VECTORCAR"){
+        columna = columna + 7
+    }else if (tipo == "VAL_VECTORCAD"){
+        columna = columna + 9
+    }else if (tipo == "VAL_VECTORB"){
+        columna = columna + 11
+    }else if (tipo == "VAL_LISTAE"){
+        columna = columna + 10
+    }else if (tipo == "VAL_LISTAD"){
+        columna = columna + 13
+    }else if (tipo == "VAL_LISTACAR"){
+        columna = columna + 11
+    }else if (tipo == "VAL_LISTACAD"){
+        columna = columna + 14
+    }else if (tipo == "VAL_LISTAB"){
+        columna = columna + 16
     }
     return {
         tipo: tipo,
@@ -55,7 +75,38 @@ class TS {
             return undefined
         }
         else{
-            if (valor == undefined){
+            if (tipo == "VAL_VECTORE"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_VECTORD"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_VECTORCAR"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_VECTORCAD"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_VECTORB"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_LISTAE"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_LISTAD"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_LISTACAR"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_LISTACAD"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }else if (tipo == "VAL_LISTAB"){
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor,ambito,linea,columna));
+                return ""
+            }
+            else if (valor == undefined){
                 this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), undefined,ambito,linea,columna));
                 return ""
             }
@@ -166,9 +217,48 @@ class TS {
         }
     }
     actualizar(id, valor){
-        var simbolo = this._simbolos.filter(simbolo=>simbolo.id.toLowerCase()  == id.toLowerCase())[0];
+        var simbolo = undefined//this._simbolos.filter(simbolo=>simbolo.id.toLowerCase()  == id.toLowerCase())[0];
+        for (let i = 0; i < this._simbolos.length; i++) {
+            if(this._simbolos[i].id != undefined){
+                if(this._simbolos[i].id.toLowerCase() == id.toLowerCase()){
+                    simbolo = this._simbolos[i]
+                    break;
+                }
+            }
+        }
         if(simbolo){
-            if(simbolo.tipo == valor.tipo){
+            if(simbolo.tipo == "VAL_VECTORE"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_VECTORD"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_VECTORCAR"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_VECTORCAD"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_VECTORB"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_LISTAE"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_LISTAD"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_LISTACAR"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_LISTACAD"){
+                simbolo.valor==valor;
+                return "";
+            }else if(simbolo.tipo == "VAL_LISTAB"){
+                simbolo.valor==valor;
+                return "";
+            }
+            else if(simbolo.tipo == valor.tipo){
                 simbolo.valor=valor.valor;
                 return ""
             }
@@ -288,6 +378,63 @@ class TS {
     }
     lengthts(){
         return this._simbolos.length;
+    }
+    aumentarlista(id,valor){
+        var simbolo = undefined//this._simbolos.filter(simbolo=>simbolo.id.toLowerCase()  == id.toLowerCase())[0];
+        for (let i = 0; i < this._simbolos.length; i++) {
+            if(this._simbolos[i].id != undefined){
+                if(this._simbolos[i].id.toLowerCase() == id.toLowerCase()){
+                    simbolo = this._simbolos[i]
+                    break;
+                }
+            }
+        }
+        if(simbolo){
+            if(simbolo.tipo == "VAL_LISTAE"){
+                if(valor.tipo == "VAL_ENTERO"){
+                    simbolo.valor.push(valor);
+                    return "";
+                }else{
+                    console.log("valor de expresion invalido, no es tipo entero")
+                    return undefined;
+                }
+            }else if(simbolo.tipo == "VAL_LISTAD"){
+                if(valor.tipo == "VAL_DECIMAL"){
+                    simbolo.valor.push(valor);
+                    return "";
+                }else{
+                    console.log("valor de expresion invalido, no es tipo entero")
+                    return undefined;
+                }
+            }else if(simbolo.tipo == "VAL_LISTACAR"){
+                if(valor.tipo == "VAL_CARACTER"){
+                    simbolo.valor.push(valor);
+                    return "";
+                }else{
+                    console.log("valor de expresion invalido, no es tipo entero")
+                    return undefined;
+                }
+            }else if(simbolo.tipo == "VAL_LISTACAD"){
+                if(valor.tipo == "VAL_CADENA"){
+                    simbolo.valor.push(valor);
+                    return "";
+                }else{
+                    console.log("valor de expresion invalido, no es tipo entero")
+                    return undefined;
+                }
+            }else if(simbolo.tipo == "VAL_LISTAB"){
+                if(valor.tipo == "VAL_BANDERA"){
+                    simbolo.valor.push(valor);
+                    return "";
+                }else{
+                    console.log("valor de expresion invalido, no es tipo entero")
+                    return undefined;
+                }
+            }else{
+                console.log("Tipo invalido, no es una lista")
+                return undefined
+            }
+        }
     }
     get simbolos() {
         return this._simbolos;

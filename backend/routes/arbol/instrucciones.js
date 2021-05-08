@@ -46,6 +46,8 @@ const TIPO_OPERACION = {
     TYPEOF:             'OP_TYPEOF',
     TOSTRING:           'OP_TOSTRING',
     TOCHARARRAY:        'OP_TOCHARARRAY',
+    ACCESOV:            'OP_ACCESOV',
+    ACCESOL:            'OP_ACCESOL',
     CASTEO:             'OP_CASTEO',
     TERNARIO:           'INSTR_TERNARIO'
 }
@@ -55,7 +57,13 @@ const TIPO_INSTRUCCION = {
     METODO:             'INSTR_METODO',
     LLAMADA:            'INSTR_LLAMADA',
     DECLARACION:        'INSTR_DECLARACION',
+    DECLARACIONV1:      'INSTR_DECLARACIONV1',
+    DECLARACIONV2:      'INSTR_DECLARACIONV2',
+    DECLARACIONL:       'INSTR_DECLARACIONL',
     ASIGNACION:         'INSTR_ASIGNACION',
+    ASIGNACIONV:        'INSTR_ASIGNACIONV',
+    ASIGNACIONL:        'INSTR_ASIGNACIONL',
+    ADDLISTA:           'INSTR_ADDLISTA',
     IMPRIMIR:           'INSTR_IMPRIMIR',
     WHILEE:             'INSTR_WHILE',
     DOWHILEE:           'INSTR_DOWHILE',
@@ -130,6 +138,60 @@ const INSTRUCCIONES = {
             expresion: expresion,
             linea:linea,
             columna:columna
+        }
+    },
+    nuevaDeclaracionV1: function(tipodec, id, tipoasig,tamaño,linea,columna){
+        return {
+            tipo: TIPO_INSTRUCCION.DECLARACIONV1,
+            tipodec:tipodec,
+            id:id,
+            tipoasig: tipoasig,
+            tamaño:tamaño,
+            linea:linea,
+            columna:columna
+        }
+    },
+    nuevaDeclaracionV2: function(tipodec, id, valores,linea,columna){
+        return {
+            tipo: TIPO_INSTRUCCION.DECLARACIONV2,
+            tipodec:tipodec,
+            id:id,
+            valores: valores,
+            linea:linea,
+            columna:columna
+        }
+    },
+    nuevaDeclaracionL: function(tipodec, id, tipoasig,linea,columna){
+        return {
+            tipo: TIPO_INSTRUCCION.DECLARACIONL,
+            tipodec:tipodec,
+            id:id,
+            tipoasig: tipoasig,
+            linea:linea,
+            columna:columna
+        }
+    },
+    nuevaAsignacionV: function(id, posicion,valor){
+        return {
+            tipo: TIPO_INSTRUCCION.ASIGNACIONV,
+            id:id,
+            posicion:posicion,
+            valor: valor
+        }
+    },
+    nuevaAsignacionL: function(id, posicion, valor){
+        return {
+            tipo: TIPO_INSTRUCCION.ASIGNACIONL,
+            id:id,
+            posicion:posicion,
+            valor: valor
+        }
+    },
+    nuevoagregarllista: function(id, valor){
+        return {
+            tipo: TIPO_INSTRUCCION.ADDLISTA,
+            id:id,
+            valor:valor
         }
     },
     nuevaAsignacion: function(identificador, expresion){

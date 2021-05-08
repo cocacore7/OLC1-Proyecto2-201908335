@@ -99,6 +99,36 @@ function GraficaTS(){
         }else if(tsReporte._simbolos[i].tipo == "VAL_FUNCION"){
             grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].tipo+"</TD>\n"
             grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Funcion</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_VECTORE"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">int[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Vector</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_VECTORD"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">double[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Vector</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_VECTORCAR"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">char[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Vector</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_VECTORCAD"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">string[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Vector</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_VECTORB"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">boolean[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Vector</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_LISTAE"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">int[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Lista</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_LISTAD"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">double[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Lista</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_LISTACAR"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">char[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Lista</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_LISTACAD"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">string[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Lista</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_LISTAB"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">boolean[]</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Lista</TD>\n"
         }
         grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].ambito+"</TD>\n"
         grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].linea+"</TD>\n"
@@ -132,8 +162,26 @@ function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots,ambito, me
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-");
         }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV1){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV2){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONL){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONV){
+            ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONL){
+            ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ADDLISTA){
+            ejecutaraumentolistaglobal(instruccion, tsglobal, tslocal,tipots,metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.METODO){
             metodos.push(instruccion);
@@ -155,8 +203,26 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,meto
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
         }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV1){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV2){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONL){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",metodos);
+        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONV){
+            ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONL){
+            ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ADDLISTA){
+            ejecutaraumentolistalocal(instruccion, tsglobal, tslocal,tipots,metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.LLAMADA){
             if(banderaciclo.length != 0){
@@ -283,7 +349,144 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos){
 }
 
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
-    if(instruccion.expresion == undefined){
+    if(instruccion.tipo == "INSTR_DECLARACIONV1"){
+        var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,metodos);
+            if (valor == undefined){
+                salida = "Error Semantico";
+            }else{
+                if (valor.tipo == "VAL_ENTERO"){
+                    let valoraux = []
+                    for (let i = 0; i < valor.valor; i++) {
+                        valoraux.push(undefined)
+                    }
+                    if(instruccion.tipodec == instruccion.tipoasig){
+                        let tipoaux = ""
+                        if(instruccion.tipodec == "VAL_ENTERO"){
+                            tipoaux = "VAL_VECTORE"
+                        }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                            tipoaux = "VAL_VECTORD"
+                        }else if(instruccion.tipodec == "VAL_CADENA"){
+                            tipoaux = "VAL_VECTORCAD"
+                        }else if(instruccion.tipodec == "VAL_CARACTER"){
+                            tipoaux = "VAL_VECTORCAR"
+                        }else if(instruccion.tipodec == "VAL_BANDERA"){
+                            tipoaux = "VAL_VECTORB"
+                        }
+                        var error =  tsglobal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                        tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                        if (error == undefined){
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    console.log("Expresion de tamaño de vector incorrecta")
+                    salida = "Error Semantico";
+                }
+            }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONV2"){
+        let valoraux = []
+        if(instruccion.tipodec == "VAL_ENTERO"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_ENTERO"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo entero")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else if(instruccion.tipodec == "VAL_DECIMAL"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_DECIMAL"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo decimal")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else if(instruccion.tipodec == "VAL_CADENA"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_CADENA"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo cadena")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else if(instruccion.tipodec == "VAL_CARACTER"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_CARACTER"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo caracter")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else if(instruccion.tipodec == "VAL_BANDERA"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_BANDERA"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo booleano")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONL"){
+        let valoraux = []
+        if(instruccion.tipodec == instruccion.tipoasig){
+            let tipoaux = ""
+            if(instruccion.tipodec == "VAL_ENTERO"){
+                tipoaux = "VAL_LISTAE"
+            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                tipoaux = "VAL_LISTAD"
+            }else if(instruccion.tipodec == "VAL_CADENA"){
+                tipoaux = "VAL_LISTACAD"
+            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                tipoaux = "VAL_LISTACAR"
+            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                tipoaux = "VAL_LISTAB"
+            }
+            var error =  tsglobal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else{
+            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+            salida = "Error Semantico";
+        }
+    }
+    else if(instruccion.expresion == undefined){
         var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase() , valor,ambito+"Variable",metodos);
         tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
         if (error == undefined){
@@ -304,7 +507,430 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
 }
 
 function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
-    if(instruccion.expresion == undefined){
+    if(instruccion.tipo == "INSTR_DECLARACIONV1"){
+        if (tslocal.lengthts() == 0){
+            var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,metodos);
+            if (valor == undefined){
+                salida = "Error Semantico";
+            }else{
+                if (valor.tipo == "VAL_ENTERO"){
+                    let valoraux = []
+                    for (let i = 0; i < valor.valor; i++) {
+                        valoraux.push(undefined)
+                    }
+                    if(instruccion.tipodec == instruccion.tipoasig){
+                        let tipoaux = ""
+                        if(instruccion.tipodec == "VAL_ENTERO"){
+                            tipoaux = "VAL_VECTORE"
+                        }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                            tipoaux = "VAL_VECTORD"
+                        }else if(instruccion.tipodec == "VAL_CADENA"){
+                            tipoaux = "VAL_VECTORCAD"
+                        }else if(instruccion.tipodec == "VAL_CARACTER"){
+                            tipoaux = "VAL_VECTORCAR"
+                        }else if(instruccion.tipodec == "VAL_BANDERA"){
+                            tipoaux = "VAL_VECTORB"
+                        }
+                        var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                        tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                        if (error == undefined){
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    console.log("Expresion de tamaño de vector incorrecta")
+                    salida = "Error Semantico";
+                }
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,metodos);
+                if (valor == undefined){
+                    salida = "Error Semantico";
+                }else{
+                    if (valor.tipo == "VAL_ENTERO"){ 
+                        let valoraux = []
+                        if(instruccion.tipodec == instruccion.tipoasig){
+                            let tipoaux = ""
+                            if(instruccion.tipodec == "VAL_ENTERO"){
+                                tipoaux = "VAL_VECTORE"
+                            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                                tipoaux = "VAL_VECTORD"
+                            }else if(instruccion.tipodec == "VAL_CADENA"){
+                                tipoaux = "VAL_VECTORCAD"
+                            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                                tipoaux = "VAL_VECTORCAR"
+                            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                                tipoaux = "VAL_VECTORB"
+                            }
+                            var error =  auxactual.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Expresion de tamaño de vector incorrecta")
+                        salida = "Error Semantico";
+                    }
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,metodos);
+                if (valor == undefined){
+                    salida = "Error Semantico";
+                }else{
+                    if (valor.tipo == "VAL_ENTERO"){
+                        let valoraux = []
+                        for (let i = 0; i < valor.valor; i++) {
+                            valoraux.push(undefined)
+                        }
+                        if(instruccion.tipodec == instruccion.tipoasig){
+                            let tipoaux = ""
+                            if(instruccion.tipodec == "VAL_ENTERO"){
+                                tipoaux = "VAL_VECTORE"
+                            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                                tipoaux = "VAL_VECTORD"
+                            }else if(instruccion.tipodec == "VAL_CADENA"){
+                                tipoaux = "VAL_VECTORCAD"
+                            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                                tipoaux = "VAL_VECTORCAR"
+                            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                                tipoaux = "VAL_VECTORB"
+                            }
+                            var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Expresion de tamaño de vector incorrecta")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONV2"){
+        if (tslocal.lengthts() == 0){
+            let valoraux = []
+            if(instruccion.tipodec == "VAL_ENTERO"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_ENTERO"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo entero")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_DECIMAL"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo decimal")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else if(instruccion.tipodec == "VAL_CADENA"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_CADENA"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo cadena")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_CARACTER"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo caracter")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_BANDERA"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo booleano")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                let valoraux = []
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_ENTERO"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo entero")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_DECIMAL"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo decimal")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CADENA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo cadena")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CARACTER"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo caracter")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_BANDERA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo bandera")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                let valoraux = []
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_ENTERO"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo entero")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_DECIMAL"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo decimal")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valvalorauxor,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CADENA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo cadena")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CARACTER"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo caracter")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_BANDERA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo bandera")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONL"){
+        if (tslocal.lengthts() == 0){
+            let valoraux = []
+            if(instruccion.tipodec == instruccion.tipoasig){
+                let tipoaux = ""
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    tipoaux = "VAL_LISTAE"
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    tipoaux = "VAL_LISTAD"
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    tipoaux = "VAL_LISTACAD"
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    tipoaux = "VAL_LISTACAR"
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    tipoaux = "VAL_LISTAB"
+                }
+                var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }else{
+                console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                salida = "Error Semantico";
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                let valoraux = []
+                if(instruccion.tipodec == instruccion.tipoasig){
+                    let tipoaux = ""
+                    if(instruccion.tipodec == "VAL_ENTERO"){
+                        tipoaux = "VAL_LISTAE"
+                    }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                        tipoaux = "VAL_LISTAD"
+                    }else if(instruccion.tipodec == "VAL_CADENA"){
+                        tipoaux = "VAL_LISTACAD"
+                    }else if(instruccion.tipodec == "VAL_CARACTER"){
+                        tipoaux = "VAL_LISTACAR"
+                    }else if(instruccion.tipodec == "VAL_BANDERA"){
+                        tipoaux = "VAL_LISTAB"
+                    }
+                    var error =  auxactual.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                    salida = "Error Semantico";
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                let valoraux = []
+                if(instruccion.tipodec == instruccion.tipoasig){
+                    let tipoaux = ""
+                    if(instruccion.tipodec == "VAL_ENTERO"){
+                        tipoaux = "VAL_LISTAE"
+                    }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                        tipoaux = "VAL_LISTAD"
+                    }else if(instruccion.tipodec == "VAL_CADENA"){
+                        tipoaux = "VAL_LISTACAD"
+                    }else if(instruccion.tipodec == "VAL_CARACTER"){
+                        tipoaux = "VAL_LISTACAR"
+                    }else if(instruccion.tipodec == "VAL_BANDERA"){
+                        tipoaux = "VAL_LISTAB"
+                    }
+                    var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                    salida = "Error Semantico";
+                }
+            }
+        }
+    }
+    else if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
             var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
             tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
@@ -363,18 +989,862 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
 }
 
 function ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,metodos){
-    var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
-    if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
-        var error =  tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-        if (error == undefined){
+    if(instruccion.tipo == "INSTR_ASIGNACIONV"){
+        let Vector = tsglobal.obtener(instruccion.id);
+                if(Vector!=undefined){
+                    var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                    if(posicion.tipo == "VAL_ENTERO"){
+                        if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                            if(Vector.tipo == "VAL_VECTORE"){
+                                if(valor.tipo == "VAL_ENTERO"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORD"){
+                                if(valor.tipo == "VAL_DECIMAL"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                if(valor.tipo == "VAL_CARACTER"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                if(valor.tipo == "VAL_CADENA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORB"){
+                                if(valor.tipo == "VAL_BANDERA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }
+                        }else{
+                            console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("La posicion de vector no es un entero")
+                        salida = "Error Semantico";
+                    }
+                }
+    }
+    if(instruccion.tipo == "INSTR_ASIGNACIONL"){
+        let Vector = tsglobal.obtener(instruccion.id);
+        if(Vector!=undefined){
+            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+            if(posicion.tipo == "VAL_ENTERO"){
+                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                    if(Vector.tipo == "VAL_LISTAE"){
+                        if(valor.tipo == "VAL_ENTERO"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTAD"){
+                        if(valor.tipo == "VAL_DECIMAL"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                        if(valor.tipo == "VAL_CARACTER"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                        if(valor.tipo == "VAL_CADENA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTAB"){
+                        if(valor.tipo == "VAL_BANDERA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }
+                }else{
+                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                    salida = "Error Semantico";
+                }
+            }else{
+                console.log("La posicion de vector no es un entero")
+                salida = "Error Semantico";
+            }
+        }
+    }else{
+        var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
+        if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+            var error =  tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+            tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
+    }   
+}
+
+function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
+    if(instruccion.tipo == "INSTR_ASIGNACIONV"){
+        var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,metodos);
+        if (valor == undefined){
             salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        let Vector = auxactual.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_VECTORE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }else{
+                        let Vector = tslocal.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_VECTORE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    let Vector = tsglobal.obtener(instruccion.id);
+                    if(Vector!=undefined){
+                        var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                        if(posicion.tipo == "VAL_ENTERO"){
+                            if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                if(Vector.tipo == "VAL_VECTORE"){
+                                    if(valor.tipo == "VAL_ENTERO"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORD"){
+                                    if(valor.tipo == "VAL_DECIMAL"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                    if(valor.tipo == "VAL_CARACTER"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                    if(valor.tipo == "VAL_CADENA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORB"){
+                                    if(valor.tipo == "VAL_BANDERA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }
+                            }else{
+                                console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("La posicion de vector no es un entero")
+                            salida = "Error Semantico";
+                        }
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                let Vector = tsglobal.obtener(instruccion.id);
+                if(Vector!=undefined){
+                    var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                    if(posicion.tipo == "VAL_ENTERO"){
+                        if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                            if(Vector.tipo == "VAL_VECTORE"){
+                                if(valor.tipo == "VAL_ENTERO"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORD"){
+                                if(valor.tipo == "VAL_DECIMAL"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                if(valor.tipo == "VAL_CARACTER"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                if(valor.tipo == "VAL_CADENA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORB"){
+                                if(valor.tipo == "VAL_BANDERA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }
+                        }else{
+                            console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("La posicion de vector no es un entero")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_ASIGNACIONL"){
+        var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,metodos);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        let Vector = auxactual.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_LISTAE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }else{
+                        let Vector = tslocal.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_LISTAE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    let Vector = tsglobal.obtener(instruccion.id);
+                    if(Vector!=undefined){
+                        var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                        if(posicion.tipo == "VAL_ENTERO"){
+                            if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                if(Vector.tipo == "VAL_LISTAE"){
+                                    if(valor.tipo == "VAL_ENTERO"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTAD"){
+                                    if(valor.tipo == "VAL_DECIMAL"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTACAR"){
+                                    if(valor.tipo == "VAL_CARACTER"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTACAD"){
+                                    if(valor.tipo == "VAL_CADENA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTAB"){
+                                    if(valor.tipo == "VAL_BANDERA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }
+                            }else{
+                                console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("La posicion de vector no es un entero")
+                            salida = "Error Semantico";
+                        }
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                let Vector = tsglobal.obtener(instruccion.id);
+                if(Vector!=undefined){
+                    var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,metodos);
+                    if(posicion.tipo == "VAL_ENTERO"){
+                        if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                            if(Vector.tipo == "VAL_LISTAE"){
+                                if(valor.tipo == "VAL_ENTERO"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTAD"){
+                                if(valor.tipo == "VAL_DECIMAL"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTACAR"){
+                                if(valor.tipo == "VAL_CARACTER"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTACAD"){
+                                if(valor.tipo == "VAL_CADENA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTAB"){
+                                if(valor.tipo == "VAL_BANDERA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }
+                        }else{
+                            console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("La posicion de vector no es un entero")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.expresion == undefined){
+        if (tslocal.lengthts() == 0){
+            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }
+        }
+    }
+    else{
+        var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        if(auxactual.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                            var error = auxactual.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                            tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            encontrado = true;
+                            break;
+                        }
+                    }else{
+                        if(tslocal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                            var error = tslocal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                            tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                        var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                        if (error == undefined){
+                            salida = "Error Semantico";
+                        }
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
+                var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+            }
         }
     }
 }
 
-function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
-    var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
+function ejecutaraumentolistaglobal(instruccion,tsglobal,tslocal,tipots,metodos){
+    var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,metodos);
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+            var error =  tsglobal.aumentarlista(instruccion.id.toLowerCase(), valor);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+        }
+    }
+}
+
+function ejecutaraumentolistalocal(instruccion,tsglobal,tslocal,tipots,metodos){
+    var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,metodos);
     if (valor == undefined){
         salida = "Error Semantico";
     }else{
@@ -386,9 +1856,8 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                 if ((typeof tipots[postipo-1]) == "object"){
                     var auxactual = tslocal.popts();
                     aux.pushts(auxactual);
-                    if(auxactual.obtener(instruccion.identificador.toLowerCase())!=undefined){
-                        var error = auxactual.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-                        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                    if(auxactual.obtener(instruccion.id.toLowerCase())!=undefined){
+                        var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -401,9 +1870,8 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                         break;
                     }
                 }else{
-                    if(tslocal.obtener(instruccion.identificador.toLowerCase())!=undefined){
-                        var error = tslocal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-                        tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                    if(tslocal.obtener(instruccion.id.toLowerCase())!=undefined){
+                        var error = tslocal.aumentarlista(instruccion.id.toLowerCase(), valor);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
@@ -419,18 +1887,16 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
                 postipo--;
             }
             if (!encontrado){
-                if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
-                    var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-                    tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+                if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                    var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
                 }
             }
         }
-        else if(tsglobal.obtener(instruccion.identificador.toLowerCase())!=undefined){
-            var error = tsglobal.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
-            tsReporte.actualizar(instruccion.identificador.toLowerCase(), valor,metodos);
+        else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+            var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -2087,6 +3553,26 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
         switch(valorIzq.tipo){
             case TIPO_DATO.CADENA:
                 return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORE:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORCAR:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORCAD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORB:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAE:
+                    return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAD:
+                    return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTACAR:
+                    return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTACAD:
+                    return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAB:
+                    return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
             default:
                 console.log("Tipo De Dato Invalido Para Funcion UPPER")
                 return undefined;
@@ -2129,6 +3615,26 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
                 return { tipo:TIPO_DATO.CADENA, valor: "Char" };
             case TIPO_DATO.BANDERA:
                 return { tipo:TIPO_DATO.CADENA, valor: "Boolean" };
+            case TIPO_DATO.VECTORE:
+                    return { tipo:TIPO_DATO.CADENA, valor: "Vector int" };
+            case TIPO_DATO.VECTORD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector double" };
+            case TIPO_DATO.VECTORCAR:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector char" };
+            case TIPO_DATO.VECTORCAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector string" };
+            case TIPO_DATO.VECTORB:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector boolean" };
+            case TIPO_DATO.LISTAE:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista int" };
+            case TIPO_DATO.LISTAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista double" };
+            case TIPO_DATO.LISTACAR:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista char" };
+            case TIPO_DATO.LISTACAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista string" };
+            case TIPO_DATO.LISTAB:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista boolean" };
             default:
                 console.log("Tipo De Dato Invalido Para Funcion UPPER")
                 return undefined;
@@ -2233,6 +3739,160 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
         else if(condicion.valor == false){
             var resultado= procesarexpresion(expresion.valfalso, tsglobal, tslocal, tipots, metodos);
             return resultado;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.ACCESOV){
+        var valorIzq = undefined;
+        let encontrado2 = false
+        if(tslocal != undefined){
+            var aux = new TS([]);
+            var postipo = tipots.length;
+            while(postipo!=0) {
+                if ((typeof tipots[postipo-1]) == "object"){
+                    var auxactual = tslocal.popts();
+                    aux.pushts(auxactual);
+                    var valorr = auxactual.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        encontrado2 = true
+                        break;
+                    }
+                }else{
+                    var valorr = tslocal.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        encontrado2 = true
+                        break;
+                    }
+                }
+                postipo--;
+            }
+            if (!encontrado2){
+                valorr = tsglobal.obtener(expresion.valor);
+                if(valorr){
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                    valorIzq = valorr;
+                }
+                else {
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                }
+            }
+        }
+        else{
+            var valorr = tsglobal.obtener(expresion.valor);
+            if(valorr){
+                valorIzq = valorr;
+            }
+        }
+        if(valorIzq == undefined){
+            return undefined
+        }else{
+            var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots, metodos);
+            if(valorIzq.tipo == "VAL_VECTORE"){
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORD"){
+                return { tipo:TIPO_DATO.DECIMAL, valor:valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORCAR"){
+                return { tipo:TIPO_DATO.CARACTER, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORCAD"){
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORB"){
+                return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor[valorDer.valor].valor}
+            }
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.ACCESOL){
+        let encontrado2 = false
+        var valorIzq = undefined;
+        if(tslocal != undefined){
+            var aux = new TS([]);
+            var postipo = tipots.length;
+            while(postipo!=0) {
+                if ((typeof tipots[postipo-1]) == "object"){
+                    var auxactual = tslocal.popts();
+                    aux.pushts(auxactual);
+                    var valorr = auxactual.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        break;
+                    }
+                }else{
+                    var valorr = tslocal.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        break;
+                    }
+                }
+                postipo--;
+            }
+            if (!encontrado2){
+                valorr = tsglobal.obtener(expresion.valor);
+                if(valorr){
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                    valorIzq = valorr;
+                }
+                else {
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                }
+            }
+        }
+        else{
+            var valorr = tsglobal.obtener(expresion.valor);
+            if(valorr){
+                valorIzq = valorr;
+            }
+        }
+        if(valorIzq == undefined){
+            return undefined
+        }else{
+            var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots, metodos);
+            if(valorIzq.tipo == "VAL_LISTAE"){
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTAD"){
+                return { tipo:TIPO_DATO.DECIMAL, valor:valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTACAR"){
+                return { tipo:TIPO_DATO.CARACTER, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTACAD"){
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTAB"){
+                return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor[valorDer.valor].valor}
+            }
         }
     }
     else if(expresion.tipo == TIPO_VALOR.ENTERO){

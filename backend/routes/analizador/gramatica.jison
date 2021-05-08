@@ -21,14 +21,20 @@
 "true"                  return 'truee';
 "false"                 return 'falsee';
 "void"                  return "vacio";
+"new"                   return "nuevalv";
+"list"                  return "lista";
+"add"                   return "addlista";
 
 /* Signos */
 ";"                     return 'pcoma';
 ","                     return 'coma';
+"."                     return 'punto';
 "{"                     return 'llavea';
 "}"                     return 'llavec';
 "("                     return 'parentesisa';
 ")"                     return 'parentesisc';
+"["                     return 'corchetea';
+"]"                     return 'corchetec';
 "?"                     return 'signointerrogacion';
 ":"                     return 'dospuntos';
 "++"                    return 'incremento';
@@ -142,15 +148,27 @@ CUERPO
     : CUERPO MAIN           { $1.push($2); $$=$1; }
     | CUERPO METODO         { $1.push($2); $$=$1; }
     | CUERPO DECLARACION    { $1.push($2); $$=$1; }
+    | CUERPO DECLARACIONVL  { $1.push($2); $$=$1; }
+    | CUERPO ASIGNACIONV    { $1.push($2); $$=$1; }
+    | CUERPO ASIGNACIONL    { $1.push($2); $$=$1; }
+    | CUERPO AGREGARL       { $1.push($2); $$=$1; }
     | CUERPO ASIGNACION     { $1.push($2); $$=$1; }
     | MAIN                  { $$=[$1]; }
     | METODO                { $$=[$1]; }
     | DECLARACION           { $$ = [$1]; }
     | ASIGNACION            { $$=[$1]; }
+    | DECLARACIONVL         { $$ = [$1]; }
+    | ASIGNACIONV           { $$ = [$1]; }
+    | ASIGNACIONL           { $$ = [$1]; }
+    | AGREGARL              { $$ = [$1]; }
     ;
 
 CUERPO2
     : CUERPO2 DECLARACION   { $1.push($2); $$=$1; }
+    | CUERPO2 DECLARACIONVL { $1.push($2); $$=$1; }
+    | CUERPO2 ASIGNACIONV   { $1.push($2); $$=$1; }
+    | CUERPO2 ASIGNACIONL   { $1.push($2); $$=$1; }
+    | CUERPO2 AGREGARL      { $1.push($2); $$=$1; }
     | CUERPO2 ASIGNACION    { $1.push($2); $$=$1; }
     | CUERPO2 LLAMADA       { $1.push($2); $$=$1; }
     | CUERPO2 IMPRIMIR      { $1.push($2); $$=$1; }
@@ -164,6 +182,10 @@ CUERPO2
     | CUERPO2 RETURNN       { $1.push($2); $$=$1; }
     | IMPRIMIR              { $$ = [$1]; }
     | DECLARACION           { $$ = [$1]; }
+    | DECLARACIONVL         { $$ = [$1]; }
+    | ASIGNACIONV           { $$ = [$1]; }
+    | ASIGNACIONL           { $$ = [$1]; }
+    | AGREGARL              { $$ = [$1]; }
     | ASIGNACION            { $$ = [$1]; }
     | LLAMADA               { $$ = [$1]; }
     | SI                    { $$ = [$1]; }
@@ -205,6 +227,47 @@ DECLARACION
     | TIPO identificador pcoma                                                      { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined,this._$.first_line,this._$.first_column+1); }
     | TIPO identificador igual CASTEO pcoma                                         { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4,this._$.first_line,this._$.first_column+1); }
     | TIPO identificador igual TERNARIO pcoma                                       { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4,this._$.first_line,this._$.first_column+1); };
+
+DECLARACIONVL
+    : TIPO corchetea corchetec  identificador igual nuevalv TIPO corchetea EXP corchetec pcoma              { $$=INSTRUCCIONES.nuevaDeclaracionV1($1, $4, $7,$9,this._$.first_line,this._$.first_column+1); }
+    | TIPO corchetea corchetec  identificador igual nuevalv TIPO corchetea CASTEO corchetec pcoma           { $$=INSTRUCCIONES.nuevaDeclaracionV1($1, $4, $7,$9,this._$.first_line,this._$.first_column+1); }
+    | TIPO corchetea corchetec  identificador igual nuevalv TIPO corchetea TERNARIO corchetec pcoma         { $$=INSTRUCCIONES.nuevaDeclaracionV1($1, $4, $7,$9,this._$.first_line,this._$.first_column+1); }
+    | TIPO corchetea corchetec  identificador igual llavea VALORESVL llavec pcoma                           { $$=INSTRUCCIONES.nuevaDeclaracionV2($1, $4, $7,this._$.first_line,this._$.first_column+1); }
+    | lista menor TIPO mayor identificador igual nuevalv lista menor TIPO mayor pcoma                       { $$=INSTRUCCIONES.nuevaDeclaracionL($3, $5, $10,this._$.first_line,this._$.first_column+1); };
+
+VALORESVL
+    : VALORESVL coma EXP                                                                                    {$1.push($3); $$=$1;}
+    | VALORESVL coma CASTEO                                                                                 {$1.push($3); $$=$1;}
+    | VALORESVL coma TERNARIO                                                                               {$1.push($3); $$=$1;}
+    | EXP                                                                                                   {$$=[$1];}
+    | CASTEO                                                                                                {$$=[$1];}
+    | TERNARIO                                                                                              {$$=[$1];};
+
+ASIGNACIONV
+    : identificador corchetea EXP corchetec igual EXP pcoma                                                 { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea CASTEO corchetec igual CASTEO pcoma                                           { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea TERNARIO corchetec igual TERNARIO pcoma                                       { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea EXP corchetec igual CASTEO pcoma                                              { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea EXP corchetec igual TERNARIO pcoma                                            { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea CASTEO corchetec igual EXP pcoma                                              { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea CASTEO corchetec igual TERNARIO pcoma                                         { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea TERNARIO corchetec igual EXP pcoma                                            { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); }
+    | identificador corchetea TERNARIO corchetec igual CASTEO pcoma                                         { $$=INSTRUCCIONES.nuevaAsignacionV($1, $3, $6); };
+
+ASIGNACIONL
+    : identificador corchetea corchetea EXP corchetec corchetec igual EXP pcoma                             { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea CASTEO corchetec corchetec igual CASTEO pcoma                       { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea TERNARIO corchetec corchetec igual TERNARIO pcoma                   { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea EXP corchetec corchetec igual CASTEO pcoma                          { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea EXP corchetec corchetec igual TERNARIO pcoma                        { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea CASTEO corchetec corchetec igual EXP pcoma                          { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea CASTEO corchetec corchetec igual TERNARIO pcoma                     { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea TERNARIO corchetec corchetec igual EXP pcoma                        { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); }
+    | identificador corchetea corchetea TERNARIO corchetec corchetec igual CASTEO pcoma                     { $$=INSTRUCCIONES.nuevaAsignacionL($1, $4, $8); };
+
+AGREGARL
+    : identificador punto addlista parentesisa EXP parentesisc pcoma                                        { $$=INSTRUCCIONES.nuevoagregarllista($1, $5); };
+
 
 ASIGNACION
     : identificador igual EXP pcoma                                                 { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
@@ -312,6 +375,8 @@ EXP
     | typeof parentesisa EXP parentesisc                { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TYPEOF, $3); }
     | tostring parentesisa EXP parentesisc              { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TOSTRING, $3); }
     | tochararray parentesisa EXP parentesisc           { $$ = INSTRUCCIONES.nuevaOperacionUnaria(TIPO_OPERACION.TOCHARARRAY, $3); }
+    | identificador corchetea EXP corchetec             { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.ACCESOV, $1, $3); }
+    | identificador corchetea corchetea EXP corchetec corchetec     { $$ = INSTRUCCIONES.nuevaOperacionBinaria(TIPO_OPERACION.ACCESOL, $1, $4); }
     | enteroo                                           { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.ENTERO, Number($1)); }
     | decimall                                          { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.DECIMAL, Number($1)); }
     | caracterr                                         { $$ = INSTRUCCIONES.nuevoValor(TIPO_VALOR.CARACTER, $1); }
