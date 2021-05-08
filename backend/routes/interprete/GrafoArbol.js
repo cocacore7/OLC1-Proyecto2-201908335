@@ -177,8 +177,26 @@ function ejecutarbloqueglobal(instrucciones, tsglobal, tslocal,tipots,ambito, me
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-",padre);
         }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV1){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-",padre);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV2){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-",padre);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONL){
+            ejecutardeclaracionglobal(instruccion, tsglobal,tslocal,tipots, ambito+"DeclaracionGlobal-",padre);
+        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,padre);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONV){
+            ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,padre);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONL){
+            ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,padre);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ADDLISTA){
+            ejecutaraumentolistaglobal(instruccion, tsglobal, tslocal,tipots,padre,metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.METODO){
             metodos.push(instruccion);
@@ -200,8 +218,26 @@ function ejecutarbloquelocal(instrucciones, tsglobal, tslocal,tipots,ambito,padr
         else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACION){
             ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",padre,metodos);
         }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV1){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",padre,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONV2){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",padre,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.DECLARACIONL){
+            ejecutardeclaracionlocal(instruccion, tsglobal,tslocal,tipots,ambito+"DeclaracionLocal-",padre,metodos);
+        }
         else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACION){
             ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONV){
+            ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ASIGNACIONL){
+            ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,metodos);
+        }
+        else if(instruccion.tipo == TIPO_INSTRUCCION.ADDLISTA){
+            ejecutaraumentolistalocal(instruccion, tsglobal, tslocal,tipots,padre,metodos);
         }
         else if(instruccion.tipo == TIPO_INSTRUCCION.LLAMADA){
             if(banderaciclo.length != 0){
@@ -422,7 +458,170 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,padre,metodos){
 }
 
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,padre,metodos){
-    if(instruccion.expresion == undefined){
+    if(instruccion.tipo == "INSTR_DECLARACIONV1"){
+        grafoarbol += "valordeclaracion"+declaracion.toString()+"[label=\"Valor Declaracion Global\"];\n"
+        var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,"valordeclaracion"+declaracion.toString(),metodos);
+        declaracion++
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if (valor.tipo == "VAL_ENTERO"){
+                let valoraux = []
+                for (let i = 0; i < valor.valor; i++) {
+                    valoraux.push(undefined)
+                }
+                if(instruccion.tipodec == instruccion.tipoasig){
+                    let tipoaux = ""
+                    if(instruccion.tipodec == "VAL_ENTERO"){
+                        tipoaux = "VAL_VECTORE"
+                    }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                        tipoaux = "VAL_VECTORD"
+                    }else if(instruccion.tipodec == "VAL_CADENA"){
+                        tipoaux = "VAL_VECTORCAD"
+                    }else if(instruccion.tipodec == "VAL_CARACTER"){
+                        tipoaux = "VAL_VECTORCAR"
+                    }else if(instruccion.tipodec == "VAL_BANDERA"){
+                        tipoaux = "VAL_VECTORB"
+                    }
+                    var error =  tsglobal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else{
+                    console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                    salida = "Error Semantico";
+                }
+            }else{
+                console.log("Expresion de tamaño de vector incorrecta")
+                salida = "Error Semantico";
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONV2"){
+        let valoraux = []
+        if(instruccion.tipodec == "VAL_ENTERO"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_ENTERO"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo entero")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }else if(instruccion.tipodec == "VAL_DECIMAL"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_DECIMAL"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo decimal")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }else if(instruccion.tipodec == "VAL_CADENA"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_CADENA"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo cadena")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }else if(instruccion.tipodec == "VAL_CARACTER"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_CARACTER"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo caracter")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }else if(instruccion.tipodec == "VAL_BANDERA"){
+            instruccion.valores.forEach(valor2 => {
+                if (valor2.tipo == "VAL_BANDERA"){
+                    valoraux.push(valor2);
+                }else{
+                    console.log("Tipo de dato invalido para vector de tipo booleano")
+                    salida = "Error Semantico";
+                }
+            });
+            var error =  tsglobal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONL"){
+        let valoraux = []
+        if(instruccion.tipodec == instruccion.tipoasig){
+            let tipoaux = ""
+            if(instruccion.tipodec == "VAL_ENTERO"){
+                tipoaux = "VAL_LISTAE"
+            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                tipoaux = "VAL_LISTAD"
+            }else if(instruccion.tipodec == "VAL_CADENA"){
+                tipoaux = "VAL_LISTACAD"
+            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                tipoaux = "VAL_LISTACAR"
+            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                tipoaux = "VAL_LISTAB"
+            }
+            var error =  tsglobal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+            declaracion++
+        }else{
+            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+            salida = "Error Semantico";
+        }
+    }
+    else if(instruccion.expresion == undefined){
         var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
         if (error == undefined){
             salida = "Error Semantico";
@@ -450,7 +649,520 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
 }
 
 function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,padre,metodos){
-    if(instruccion.expresion == undefined){
+    if(instruccion.tipo == "INSTR_DECLARACIONV1"){
+        if (tslocal.lengthts() == 0){
+            grafoarbol += "valordeclaracion"+declaracion.toString()+"[label=\"Valor Declaracion Local\"];\n"
+            var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,"valordeclaracion"+declaracion.toString(),metodos);
+            declaracion++
+            if (valor == undefined){
+                salida = "Error Semantico";
+            }else{
+                if (valor.tipo == "VAL_ENTERO"){
+                    let valoraux = []
+                    for (let i = 0; i < valor.valor; i++) {
+                        valoraux.push(undefined)
+                    }
+                    if(instruccion.tipodec == instruccion.tipoasig){
+                        let tipoaux = ""
+                        if(instruccion.tipodec == "VAL_ENTERO"){
+                            tipoaux = "VAL_VECTORE"
+                        }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                            tipoaux = "VAL_VECTORD"
+                        }else if(instruccion.tipodec == "VAL_CADENA"){
+                            tipoaux = "VAL_VECTORCAD"
+                        }else if(instruccion.tipodec == "VAL_CARACTER"){
+                            tipoaux = "VAL_VECTORCAR"
+                        }else if(instruccion.tipodec == "VAL_BANDERA"){
+                            tipoaux = "VAL_VECTORB"
+                        }
+                        var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                        tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                        if (error == undefined){
+                            salida = "Error Semantico";
+                        }
+                        grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                        grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                        grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                        declaracion++
+                    }else{
+                        console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                        salida = "Error Semantico";
+                    }
+                }else{
+                    console.log("Expresion de tamaño de vector incorrecta")
+                    salida = "Error Semantico";
+                }
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                grafoarbol += "valordeclaracion"+declaracion.toString()+"[label=\"Valor Declaracion Local\"];\n"
+                var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,"valordeclaracion"+declaracion.toString(),metodos);
+                declaracion++
+                if (valor == undefined){
+                    salida = "Error Semantico";
+                }else{
+                    if (valor.tipo == "VAL_ENTERO"){ 
+                        let valoraux = []
+                        if(instruccion.tipodec == instruccion.tipoasig){
+                            let tipoaux = ""
+                            if(instruccion.tipodec == "VAL_ENTERO"){
+                                tipoaux = "VAL_VECTORE"
+                            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                                tipoaux = "VAL_VECTORD"
+                            }else if(instruccion.tipodec == "VAL_CADENA"){
+                                tipoaux = "VAL_VECTORCAD"
+                            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                                tipoaux = "VAL_VECTORCAR"
+                            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                                tipoaux = "VAL_VECTORB"
+                            }
+                            var error =  auxactual.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                            declaracion++
+                        }else{
+                            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Expresion de tamaño de vector incorrecta")
+                        salida = "Error Semantico";
+                    }
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                grafoarbol += "valordeclaracion"+declaracion.toString()+"[label=\"Valor Declaracion Local\"];\n"
+                var valor = procesarexpresion(instruccion.tamaño, tsglobal,tslocal,tipots,"valordeclaracion"+declaracion.toString(),metodos);
+                declaracion++
+                if (valor == undefined){
+                    salida = "Error Semantico";
+                }else{
+                    if (valor.tipo == "VAL_ENTERO"){
+                        let valoraux = []
+                        for (let i = 0; i < valor.valor; i++) {
+                            valoraux.push(undefined)
+                        }
+                        if(instruccion.tipodec == instruccion.tipoasig){
+                            let tipoaux = ""
+                            if(instruccion.tipodec == "VAL_ENTERO"){
+                                tipoaux = "VAL_VECTORE"
+                            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                                tipoaux = "VAL_VECTORD"
+                            }else if(instruccion.tipodec == "VAL_CADENA"){
+                                tipoaux = "VAL_VECTORCAD"
+                            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                                tipoaux = "VAL_VECTORCAR"
+                            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                                tipoaux = "VAL_VECTORB"
+                            }
+                            var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                            tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                            grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                            declaracion++
+                        }else{
+                            console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("Expresion de tamaño de vector incorrecta")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONV2"){
+        if (tslocal.lengthts() == 0){
+            let valoraux = []
+            if(instruccion.tipodec == "VAL_ENTERO"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_ENTERO"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo entero")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_DECIMAL"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo decimal")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }else if(instruccion.tipodec == "VAL_CADENA"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_CADENA"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo cadena")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }else if(instruccion.tipodec == "VAL_CARACTER"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_CARACTER"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo caracter")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }else if(instruccion.tipodec == "VAL_BANDERA"){
+                instruccion.valores.forEach(valor2 => {
+                    if (valor2.tipo == "VAL_BANDERA"){
+                        valoraux.push(valor2);
+                    }else{
+                        console.log("Tipo de dato invalido para vector de tipo booleano")
+                        salida = "Error Semantico";
+                    }
+                });
+                var error =  tslocal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                let valoraux = []
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_ENTERO"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo entero")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_DECIMAL"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo decimal")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CADENA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo cadena")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CARACTER"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo caracter")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_BANDERA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo bandera")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  auxactual.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                let valoraux = []
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_ENTERO"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo entero")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORE", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_DECIMAL"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo decimal")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valvalorauxor,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CADENA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo cadena")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAD", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_CARACTER"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo caracter")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORCAR", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    instruccion.valores.forEach(valor2 => {
+                        if (valor2.tipo == "VAL_BANDERA"){
+                            valoraux.push(valor2);
+                        }else{
+                            console.log("Tipo de dato invalido para vector de tipo bandera")
+                            salida = "Error Semantico";
+                        }
+                    });
+                    var error =  tslocal.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar("VAL_VECTORB", instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_DECLARACIONL"){
+        if (tslocal.lengthts() == 0){
+            let valoraux = []
+            if(instruccion.tipodec == instruccion.tipoasig){
+                let tipoaux = ""
+                if(instruccion.tipodec == "VAL_ENTERO"){
+                    tipoaux = "VAL_LISTAE"
+                }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                    tipoaux = "VAL_LISTAD"
+                }else if(instruccion.tipodec == "VAL_CADENA"){
+                    tipoaux = "VAL_LISTACAD"
+                }else if(instruccion.tipodec == "VAL_CARACTER"){
+                    tipoaux = "VAL_LISTACAR"
+                }else if(instruccion.tipodec == "VAL_BANDERA"){
+                    tipoaux = "VAL_LISTAB"
+                }
+                var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                declaracion++
+            }else{
+                console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                salida = "Error Semantico";
+            }
+        }else{
+            var auxactual = tslocal.popts();
+            if (auxactual.id == undefined){
+                let valoraux = []
+                if(instruccion.tipodec == instruccion.tipoasig){
+                    let tipoaux = ""
+                    if(instruccion.tipodec == "VAL_ENTERO"){
+                        tipoaux = "VAL_LISTAE"
+                    }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                        tipoaux = "VAL_LISTAD"
+                    }else if(instruccion.tipodec == "VAL_CADENA"){
+                        tipoaux = "VAL_LISTACAD"
+                    }else if(instruccion.tipodec == "VAL_CARACTER"){
+                        tipoaux = "VAL_LISTACAR"
+                    }else if(instruccion.tipodec == "VAL_BANDERA"){
+                        tipoaux = "VAL_LISTAB"
+                    }
+                    var error =  auxactual.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else{
+                    console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                    salida = "Error Semantico";
+                }
+                tslocal.pushts(auxactual);
+            }else{
+                tslocal.pushts(auxactual);
+                let valoraux = []
+                if(instruccion.tipodec == instruccion.tipoasig){
+                    let tipoaux = ""
+                    if(instruccion.tipodec == "VAL_ENTERO"){
+                        tipoaux = "VAL_LISTAE"
+                    }else if(instruccion.tipodec == "VAL_DECIMAL"){
+                        tipoaux = "VAL_LISTAD"
+                    }else if(instruccion.tipodec == "VAL_CADENA"){
+                        tipoaux = "VAL_LISTACAD"
+                    }else if(instruccion.tipodec == "VAL_CARACTER"){
+                        tipoaux = "VAL_LISTACAR"
+                    }else if(instruccion.tipodec == "VAL_BANDERA"){
+                        tipoaux = "VAL_LISTAB"
+                    }
+                    var error =  tslocal.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",metodos);
+                    tsReporte.agregar(tipoaux, instruccion.id.toLowerCase(), valoraux,ambito+"Vector",instruccion.linea,instruccion.columna,metodos);
+                    if (error == undefined){
+                        salida = "Error Semantico";
+                    }
+                    grafoarbol += "declaracion"+declaracion.toString()+"[label=\"Declaracion Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += padre+"->"+"declaracion"+declaracion.toString()+";\n"
+                    grafoarbol += "declaracion"+declaracion.toString()+"->"+"valordeclaracion"+(declaracion-1).toString()+";\n"
+                    declaracion++
+                }else{
+                    console.log("Tipo de declaracion de vector distinto al tipo de asignacion de vector")
+                    salida = "Error Semantico";
+                }
+            }
+        }
+    }
+    else if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
             var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id, valor,ambito+"Variable",metodos);
             if (error == undefined){
@@ -526,24 +1238,1087 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,p
 }
 
 function ejecutarasignacionglobal(instruccion, tsglobal, tslocal,tipots,padre,metodos){
-    grafoarbol += "valorasignacion"+declaracion.toString()+"[label=\"Valor Asignacion Global\"];\n"
-    var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
-    asignacion++
-    if(tsglobal.obtener(instruccion.identificador)!=undefined){
-        var error =  tsglobal.actualizar(instruccion.identificador, valor,metodos);
-        if (error == undefined){
-            salida = "Error Semantico";
+    if(instruccion.tipo == "INSTR_ASIGNACIONV"){
+        let Vector = tsglobal.obtener(instruccion.id);
+        if(Vector!=undefined){
+            grafoarbol += "valorasignacion"+declaracion.toString()+"[label=\"Valor Asignacion Global\"];\n"
+            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+declaracion.toString(),metodos);
+            asignacion++
+            if(posicion.tipo == "VAL_ENTERO"){
+                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                    if(Vector.tipo == "VAL_VECTORE"){
+                        if(valor.tipo == "VAL_ENTERO"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_VECTORD"){
+                        if(valor.tipo == "VAL_DECIMAL"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_VECTORCAR"){
+                        if(valor.tipo == "VAL_CARACTER"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_VECTORCAD"){
+                        if(valor.tipo == "VAL_CADENA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_VECTORB"){
+                        if(valor.tipo == "VAL_BANDERA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }
+                }else{
+                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                    salida = "Error Semantico";
+                }
+            }else{
+                console.log("La posicion de vector no es un entero")
+                salida = "Error Semantico";
+            }
         }
-        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
-        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
-        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+    }
+    if(instruccion.tipo == "INSTR_ASIGNACIONL"){
+        let Vector = tsglobal.obtener(instruccion.id);
+        if(Vector!=undefined){
+            grafoarbol += "valorasignacion"+declaracion.toString()+"[label=\"Valor Asignacion Global\"];\n"
+            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+declaracion.toString(),metodos);
+            asignacion++
+            if(posicion.tipo == "VAL_ENTERO"){
+                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                    if(Vector.tipo == "VAL_LISTAE"){
+                        if(valor.tipo == "VAL_ENTERO"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTAD"){
+                        if(valor.tipo == "VAL_DECIMAL"){
+                            Vector.valor[posicion.valor] = valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                        if(valor.tipo == "VAL_CARACTER"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                        if(valor.tipo == "VAL_CADENA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }else if(Vector.tipo == "VAL_LISTAB"){
+                        if(valor.tipo == "VAL_BANDERA"){
+                            Vector.valor[valor.valor] = valor2.valor
+                            var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                        }else{
+                            salida = "Error Semantico";
+                        }
+                    }
+                }else{
+                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                    salida = "Error Semantico";
+                }
+            }else{
+                console.log("La posicion de vector no es un entero")
+                salida = "Error Semantico";
+            }
+        }
+    }else{
+        grafoarbol += "valorasignacion"+declaracion.toString()+"[label=\"Valor Asignacion Global\"];\n"
+        var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,"valorasignacion"+declaracion.toString(),metodos);
         asignacion++
+        if(tsglobal.obtener(instruccion.identificador)!=undefined){
+            var error =  tsglobal.actualizar(instruccion.identificador, valor,metodos);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Global: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+            asignacion++
+        }
     }
 }
 
 function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,metodos){
-    grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
-    var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+    if(instruccion.tipo == "INSTR_ASIGNACIONV"){
+        grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+        var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+        asignacion++
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        let Vector = auxactual.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                            asignacion++
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_VECTORE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }else{
+                        let Vector = tslocal.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                            asignacion++
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_VECTORE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_VECTORB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    let Vector = tsglobal.obtener(instruccion.id);
+                    if(Vector!=undefined){
+                        grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                        var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                        asignacion++
+                        if(posicion.tipo == "VAL_ENTERO"){
+                            if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                if(Vector.tipo == "VAL_VECTORE"){
+                                    if(valor.tipo == "VAL_ENTERO"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORD"){
+                                    if(valor.tipo == "VAL_DECIMAL"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                    if(valor.tipo == "VAL_CARACTER"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                    if(valor.tipo == "VAL_CADENA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_VECTORB"){
+                                    if(valor.tipo == "VAL_BANDERA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }
+                            }else{
+                                console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("La posicion de vector no es un entero")
+                            salida = "Error Semantico";
+                        }
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                let Vector = tsglobal.obtener(instruccion.id);
+                if(Vector!=undefined){
+                    grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                    var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                    asignacion++
+                    if(posicion.tipo == "VAL_ENTERO"){
+                        if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                            if(Vector.tipo == "VAL_VECTORE"){
+                                if(valor.tipo == "VAL_ENTERO"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORD"){
+                                if(valor.tipo == "VAL_DECIMAL"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAR"){
+                                if(valor.tipo == "VAL_CARACTER"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORCAD"){
+                                if(valor.tipo == "VAL_CADENA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_VECTORB"){
+                                if(valor.tipo == "VAL_BANDERA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }
+                        }else{
+                            console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("La posicion de vector no es un entero")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }
+    else if(instruccion.tipo == "INSTR_ASIGNACIONL"){
+        grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+        var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+        asignacion++
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        let Vector = auxactual.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                            asignacion++
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_LISTAE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = auxactual.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }else{
+                        let Vector = tslocal.obtener(instruccion.id);
+                        if(Vector!=undefined){
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                            var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                            asignacion++
+                            if(posicion.tipo == "VAL_ENTERO"){
+                                if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                    if(Vector.tipo == "VAL_LISTAE"){
+                                        if(valor.tipo == "VAL_ENTERO"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAD"){
+                                        if(valor.tipo == "VAL_DECIMAL"){
+                                            Vector.valor[posicion.valor] = valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAR"){
+                                        if(valor.tipo == "VAL_CARACTER"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTACAD"){
+                                        if(valor.tipo == "VAL_CADENA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }else if(Vector.tipo == "VAL_LISTAB"){
+                                        if(valor.tipo == "VAL_BANDERA"){
+                                            Vector.valor[valor.valor] = valor2.valor
+                                            var error = tslocal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                            if (error == undefined){
+                                                salida = "Error Semantico";
+                                            }
+                                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                            asignacion++
+                                        }else{
+                                            salida = "Error Semantico";
+                                        }
+                                    }
+                                }else{
+                                    console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                    salida = "Error Semantico";
+                                }
+                                
+                                encontrado = true;
+                                break;
+                            }else{
+                                console.log("La posicion de vector no es un entero")
+                                salida = "Error Semantico";
+                                break
+                            }
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    let Vector = tsglobal.obtener(instruccion.id);
+                    if(Vector!=undefined){
+                        grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                        var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                        asignacion++
+                        if(posicion.tipo == "VAL_ENTERO"){
+                            if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                                if(Vector.tipo == "VAL_LISTAE"){
+                                    if(valor.tipo == "VAL_ENTERO"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTAD"){
+                                    if(valor.tipo == "VAL_DECIMAL"){
+                                        Vector.valor[posicion.valor] = valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTACAR"){
+                                    if(valor.tipo == "VAL_CARACTER"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTACAD"){
+                                    if(valor.tipo == "VAL_CADENA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }else if(Vector.tipo == "VAL_LISTAB"){
+                                    if(valor.tipo == "VAL_BANDERA"){
+                                        Vector.valor[valor.valor] = valor2.valor
+                                        var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                        if (error == undefined){
+                                            salida = "Error Semantico";
+                                        }
+                                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                        asignacion++
+                                    }else{
+                                        salida = "Error Semantico";
+                                    }
+                                }
+                            }else{
+                                console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                                salida = "Error Semantico";
+                            }
+                        }else{
+                            console.log("La posicion de vector no es un entero")
+                            salida = "Error Semantico";
+                        }
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                let Vector = tsglobal.obtener(instruccion.id);
+                if(Vector!=undefined){
+                    grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+                    var posicion = procesarexpresion(instruccion.posicion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+                    asignacion++
+                    if(posicion.tipo == "VAL_ENTERO"){
+                        if((posicion.valor >=0) && (posicion.valor <Vector.valor.length)) {
+                            if(Vector.tipo == "VAL_LISTAE"){
+                                if(valor.tipo == "VAL_ENTERO"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTAD"){
+                                if(valor.tipo == "VAL_DECIMAL"){
+                                    Vector.valor[posicion.valor] = valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTACAR"){
+                                if(valor.tipo == "VAL_CARACTER"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTACAD"){
+                                if(valor.tipo == "VAL_CADENA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }else if(Vector.tipo == "VAL_LISTAB"){
+                                if(valor.tipo == "VAL_BANDERA"){
+                                    Vector.valor[valor.valor] = valor2.valor
+                                    var error = tsglobal.actualizar(instruccion.id.toLowerCase(), Vector.valor ,metodos);
+                                    if (error == undefined){
+                                        salida = "Error Semantico";
+                                    }
+                                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                                    grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                                    grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                                    asignacion++
+                                }else{
+                                    salida = "Error Semantico";
+                                }
+                            }
+                        }else{
+                            console.log("La posicion de vector no se encuentra dentro del tamaño del vector")
+                            salida = "Error Semantico";
+                        }
+                    }else{
+                        console.log("La posicion de vector no es un entero")
+                        salida = "Error Semantico";
+                    }
+                }
+            }
+        }
+    }else{
+        grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Asignacion Local\"];\n"
+        var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+        asignacion++
+        if (valor == undefined){
+            salida = "Error Semantico";
+        }else{
+            if(tslocal != undefined){
+                var encontrado = false;
+                var aux = new TS([]);
+                var postipo = tipots.length;
+                while(postipo!=0) {
+                    if ((typeof tipots[postipo-1]) == "object"){
+                        var auxactual = tslocal.popts();
+                        aux.pushts(auxactual);
+                        if(auxactual.obtener(instruccion.identificador)!=undefined){
+                            var error = auxactual.actualizar(instruccion.identificador, valor,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            encontrado = true;
+                            break;
+                        }
+                    }else{
+                        if(tslocal.obtener(instruccion.identificador)!=undefined){
+                            var error = tslocal.actualizar(instruccion.identificador, valor,metodos);
+                            if (error == undefined){
+                                salida = "Error Semantico";
+                            }
+                            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                            asignacion++
+                            let final = aux.lengthts();
+                            while(final != 0){
+                                tslocal.pushts(aux.popts());
+                                final--;
+                            }
+                            encontrado = true;
+                            break;
+                        }
+                    }
+                    postipo--;
+                }
+                if (!encontrado){
+                    if(tsglobal.obtener(instruccion.identificador)!=undefined){
+                        var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
+                        tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                        if (error == undefined){
+                            salida = "Error Semantico";
+                        }
+                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                        grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                        grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                        asignacion++
+                    }
+                }
+            }
+            else if(tsglobal.obtener(instruccion.identificador)!=undefined){
+                var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
+                tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                if (error == undefined){
+                    salida = "Error Semantico";
+                }
+                grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+                grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+                asignacion++
+            }
+        }
+    }
+}
+
+function ejecutaraumentolistaglobal(instruccion,tsglobal,tslocal,tipots,padre,metodos){
+    grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Add Lista Global\"];\n"
+    var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
+    asignacion++
+    if (valor == undefined){
+        salida = "Error Semantico";
+    }else{
+        if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+            var error =  tsglobal.aumentarlista(instruccion.id.toLowerCase(), valor);
+            if (error == undefined){
+                salida = "Error Semantico";
+            }
+            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Aumento Lista Global: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
+            grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
+            asignacion++
+        }
+    }
+}
+
+function ejecutaraumentolistalocal(instruccion,tsglobal,tslocal,tipots,padre,metodos){
+    grafoarbol += "valorasignacion"+asignacion.toString()+"[label=\"Valor Add Lista Local\"];\n"
+    var valor = procesarexpresion(instruccion.valor,tsglobal, tslocal,tipots,"valorasignacion"+asignacion.toString(),metodos);
     asignacion++
     if (valor == undefined){
         salida = "Error Semantico";
@@ -556,12 +2331,12 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,met
                 if ((typeof tipots[postipo-1]) == "object"){
                     var auxactual = tslocal.popts();
                     aux.pushts(auxactual);
-                    if(auxactual.obtener(instruccion.identificador)!=undefined){
-                        var error = auxactual.actualizar(instruccion.identificador, valor,metodos);
+                    if(auxactual.obtener(instruccion.id.toLowerCase())!=undefined){
+                        var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
-                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Aumento Lista Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
                         grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
                         grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
                         asignacion++
@@ -574,12 +2349,12 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,met
                         break;
                     }
                 }else{
-                    if(tslocal.obtener(instruccion.identificador)!=undefined){
-                        var error = tslocal.actualizar(instruccion.identificador, valor,metodos);
+                    if(tslocal.obtener(instruccion.id.toLowerCase())!=undefined){
+                        var error = tslocal.aumentarlista(instruccion.id.toLowerCase(), valor);
                         if (error == undefined){
                             salida = "Error Semantico";
                         }
-                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                        grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Aumento Lista Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
                         grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
                         grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
                         asignacion++
@@ -595,26 +2370,24 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,padre,met
                 postipo--;
             }
             if (!encontrado){
-                if(tsglobal.obtener(instruccion.identificador)!=undefined){
-                    var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
-                    tsReporte.actualizar(instruccion.identificador, valor,metodos);
+                if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+                    var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
-                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+                    grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Aumento Lista Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
                     grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
                     grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
                     asignacion++
                 }
             }
         }
-        else if(tsglobal.obtener(instruccion.identificador)!=undefined){
-            var error = tsglobal.actualizar(instruccion.identificador, valor,metodos);
-            tsReporte.actualizar(instruccion.identificador, valor,metodos);
+        else if(tsglobal.obtener(instruccion.id.toLowerCase())!=undefined){
+            var error = auxactual.aumentarlista(instruccion.id.toLowerCase(), valor);
             if (error == undefined){
                 salida = "Error Semantico";
             }
-            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Asignacion Local: "+instruccion.identificador+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
+            grafoarbol += "asignacion"+asignacion.toString()+"[label=\"Aumento Lista Local: "+instruccion.id+"\",style=\"filled\", fillcolor=\"orange:yellow\"];\n"
             grafoarbol += padre+"->"+"asignacion"+asignacion.toString()+";\n"
             grafoarbol += "asignacion"+asignacion.toString()+"->"+"valorasignacion"+(asignacion-1).toString()+";\n"
             asignacion++
@@ -2307,6 +4080,26 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
         switch(valorIzq.tipo){
             case TIPO_DATO.CADENA:
                 return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORE:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORCAR:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORCAD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.VECTORB:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAE:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTACAR:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTACAD:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
+            case TIPO_DATO.LISTAB:
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor.length };
             default:
                 console.log("Tipo De Dato Invalido Para Funcion UPPER")
                 return undefined;
@@ -2361,6 +4154,26 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
                 return { tipo:TIPO_DATO.CADENA, valor: "Char" };
             case TIPO_DATO.BANDERA:
                 return { tipo:TIPO_DATO.CADENA, valor: "Boolean" };
+            case TIPO_DATO.VECTORE:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector int" };
+            case TIPO_DATO.VECTORD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector double" };
+            case TIPO_DATO.VECTORCAR:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector char" };
+            case TIPO_DATO.VECTORCAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector string" };
+            case TIPO_DATO.VECTORB:
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector boolean" };
+            case TIPO_DATO.LISTAE:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista int" };
+            case TIPO_DATO.LISTAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista double" };
+            case TIPO_DATO.LISTACAR:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista char" };
+            case TIPO_DATO.LISTACAD:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista string" };
+            case TIPO_DATO.LISTAB:
+                return { tipo:TIPO_DATO.CADENA, valor: "Lista boolean" };
             default:
                 console.log("Tipo De Dato Invalido Para Funcion UPPER")
                 return undefined;
@@ -2499,6 +4312,168 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,padre,metodos){
             expresionpro++
             procesarexpresion(expresion.valverdadero, tsglobal, tslocal, tipots,"valverdadero"+temporal.toString(), metodos);
             return resultado;
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.ACCESOV){
+        grafoarbol += "avector"+expresionpro.toString()+"[label=\"Operacion Acceder Valor Vector\"];\n"
+        grafoarbol += padre+"->"+"avector"+expresionpro.toString()+";\n"
+        var temporal = expresionpro
+        expresionpro++
+        var valorIzq = undefined;
+        let encontrado2 = false
+        if(tslocal != undefined){
+            var aux = new TS([]);
+            var postipo = tipots.length;
+            while(postipo!=0) {
+                if ((typeof tipots[postipo-1]) == "object"){
+                    var auxactual = tslocal.popts();
+                    aux.pushts(auxactual);
+                    var valorr = auxactual.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        encontrado2 = true
+                        break;
+                    }
+                }else{
+                    var valorr = tslocal.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        encontrado2 = true
+                        break;
+                    }
+                }
+                postipo--;
+            }
+            if (!encontrado2){
+                valorr = tsglobal.obtener(expresion.valor);
+                if(valorr){
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                    valorIzq = valorr;
+                }
+                else {
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                }
+            }
+        }
+        else{
+            var valorr = tsglobal.obtener(expresion.valor);
+            if(valorr){
+                valorIzq = valorr;
+            }
+        }
+        if(valorIzq == undefined){
+            return undefined
+        }else{
+            var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"avector"+temporal.toString(), metodos);
+            if(valorIzq.tipo == "VAL_VECTORE"){
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORD"){
+                return { tipo:TIPO_DATO.DECIMAL, valor:valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORCAR"){
+                return { tipo:TIPO_DATO.CARACTER, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORCAD"){
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_VECTORB"){
+                return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor[valorDer.valor].valor}
+            }
+        }
+    }
+    else if(expresion.tipo == TIPO_OPERACION.ACCESOL){
+        grafoarbol += "alista"+expresionpro.toString()+"[label=\"Operacion Acceder Valor Lista\"];\n"
+        grafoarbol += padre+"->"+"alista"+expresionpro.toString()+";\n"
+        var temporal = expresionpro
+        expresionpro++
+        let encontrado2 = false
+        var valorIzq = undefined;
+        if(tslocal != undefined){
+            var aux = new TS([]);
+            var postipo = tipots.length;
+            while(postipo!=0) {
+                if ((typeof tipots[postipo-1]) == "object"){
+                    var auxactual = tslocal.popts();
+                    aux.pushts(auxactual);
+                    var valorr = auxactual.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        break;
+                    }
+                }else{
+                    var valorr = tslocal.obtener(expresion.operandoIzq);
+                    if(valorr){
+                        let final = aux.lengthts();
+                        while(final != 0){
+                            tslocal.pushts(aux.popts());
+                            final--;
+                        }
+                        valorIzq = valorr;
+                        break;
+                    }
+                }
+                postipo--;
+            }
+            if (!encontrado2){
+                valorr = tsglobal.obtener(expresion.valor);
+                if(valorr){
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                    valorIzq = valorr;
+                }
+                else {
+                    let final = aux.lengthts();
+                    while(final != 0){
+                        tslocal.pushts(aux.popts());
+                        final--;
+                    }
+                }
+            }
+        }
+        else{
+            var valorr = tsglobal.obtener(expresion.valor);
+            if(valorr){
+                valorIzq = valorr;
+            }
+        }
+        if(valorIzq == undefined){
+            return undefined
+        }else{
+            var valorDer = procesarexpresion(expresion.operandoDer, tsglobal, tslocal, tipots,"alista"+temporal.toString(), metodos);
+            if(valorIzq.tipo == "VAL_LISTAE"){
+                return { tipo:TIPO_DATO.ENTERO, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTAD"){
+                return { tipo:TIPO_DATO.DECIMAL, valor:valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTACAR"){
+                return { tipo:TIPO_DATO.CARACTER, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTACAD"){
+                return { tipo:TIPO_DATO.CADENA, valor: valorIzq.valor[valorDer.valor].valor}
+            }else if(valorIzq.tipo == "VAL_LISTAB"){
+                return { tipo:TIPO_DATO.BANDERA, valor: valorIzq.valor[valorDer.valor].valor}
+            }
         }
     }
     else if(expresion.tipo == TIPO_VALOR.ENTERO){

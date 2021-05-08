@@ -1737,32 +1737,6 @@ function ejecutarasignacionlocal(instruccion, tsglobal, tslocal,tipots,metodos){
             }
         }
     }
-    else if(instruccion.expresion == undefined){
-        if (tslocal.lengthts() == 0){
-            var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
-            if (error == undefined){
-                salida = "Error Semantico";
-            }
-        }else{
-            var auxactual = tslocal.popts();
-            if (auxactual.id == undefined){
-                var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
-                if (error == undefined){
-                    salida = "Error Semantico";
-                }
-                tslocal.pushts(auxactual);
-            }else{
-                tslocal.pushts(auxactual);
-                var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
-                if (error == undefined){
-                    salida = "Error Semantico";
-                }
-            }
-        }
-    }
     else{
         var valor = procesarexpresion(instruccion.expresion,tsglobal, tslocal,tipots,metodos);
         if (valor == undefined){
@@ -3616,7 +3590,7 @@ function procesarexpresion(expresion, tsglobal, tslocal,tipots,metodos){
             case TIPO_DATO.BANDERA:
                 return { tipo:TIPO_DATO.CADENA, valor: "Boolean" };
             case TIPO_DATO.VECTORE:
-                    return { tipo:TIPO_DATO.CADENA, valor: "Vector int" };
+                return { tipo:TIPO_DATO.CADENA, valor: "Vector int" };
             case TIPO_DATO.VECTORD:
                 return { tipo:TIPO_DATO.CADENA, valor: "Vector double" };
             case TIPO_DATO.VECTORCAR:
