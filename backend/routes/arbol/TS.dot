@@ -3,202 +3,68 @@ node [shape=filled];
 a0 [label=<
 <TABLE border="10" cellspacing="10" cellpadding="10" style="rounded" bgcolor="/rdylgn11/1:/rdylgn11/11" gradientangle="315">
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">TIPO</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">IDENTIFICADOR</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VALOR</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">TIPO DE DATO</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">TIPO</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">AMBITO</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">LINEA</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">COLUMNA</TD>
 </TR>
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global1</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global2</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">10.45</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CARACTER</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">A</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global4</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Declaracion Global</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_BANDERA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">true</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">global6</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">123</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueGlobal-DeclaracionGlobal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">implicito1</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">implicito2</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">hanoi</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Void</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Metodo</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Metodo</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">implicito3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">10</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">implicito4</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_BANDERA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">implicito5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">true</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito1</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Declaracion Global</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito2</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">B</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">123</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito4</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">123.456</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">true</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito6</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">123</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito7</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">67</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito8</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">123</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_DECIMAL</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito9</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">67</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CARACTER</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">explicito10</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">}</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">insensitive</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">15</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">contador</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">6</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">main</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Void</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Metodo</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">MetodoExec</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">12</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">6</TD>
+</TR>
+<TR>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">n</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Int</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Variable</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">13</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">7</TD>
 </TR>
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">contador2</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">24</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-BloqueWHILE-DeclaracionLocal-Variable</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">num</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Int</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Variable</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">16</TD>
 </TR>
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">a</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">5</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Caracter</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Variable</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">17</TD>
 </TR>
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">b</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">c</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">2</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Caracter</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Variable</TD>
 <TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">17</TD>
 </TR>
 <TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">x</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">5</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-BloqueFOR-DeclaracionVariableFor-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">y</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">25</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-BloqueFOR-BloqueFOR-DeclaracionVariableFor-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_CADENA</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">cadena</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">HOLAMUNDO2: 100</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">swtichh</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
-</TR>
-<TR>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">VAL_ENTERO</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">iff</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">3</TD>
-<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalPrincipal-DeclaracionLocal-Variable</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">b</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Caracter</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">Variable</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">BloqueLocalLlamada-ParametroLlamada</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">1</TD>
+<TD border="3"  bgcolor="/rdylgn11/1:/rdylgn11/2">17</TD>
 </TR>
 </TABLE>>];
 }

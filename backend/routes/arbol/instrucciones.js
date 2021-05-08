@@ -97,12 +97,14 @@ const INSTRUCCIONES = {
             parametros: parametros
         }
     },
-    nuevoMetodo: function(identificador, parametros, instrucciones){
+    nuevoMetodo: function(identificador, parametros, instrucciones,linea,columna){
         return {
             tipo: TIPO_INSTRUCCION.METODO,
             identificador: identificador,
             parametros: parametros,
-            instrucciones: instrucciones
+            instrucciones: instrucciones,
+            linea: linea,
+            columna: columna
         }
     },
     nuevaLlamada: function(identificador, parametros){
@@ -112,18 +114,22 @@ const INSTRUCCIONES = {
             parametros: parametros
         }
     },
-    nuevoParametro: function(tipo, identificador){
+    nuevoParametro: function(tipo, identificador,linea,columna){
         return{
             tipo: tipo,
-            identificador: identificador
+            identificador: identificador,
+            linea:linea,
+            columna:columna
         }
     },
-    nuevaDeclaracion: function(tipo, id, expresion){
+    nuevaDeclaracion: function(tipo, id, expresion,linea,columna){
         return {
             tipo: TIPO_INSTRUCCION.DECLARACION,
             tipo_dato:tipo,
             id:id,
-            expresion: expresion
+            expresion: expresion,
+            linea:linea,
+            columna:columna
         }
     },
     nuevaAsignacion: function(identificador, expresion){

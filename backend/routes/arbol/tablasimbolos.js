@@ -20,12 +20,25 @@ const TIPO_DATO = {
     LISTAB:         'VAL_LISTAB'
 }
 
-function crearSimbolo(tipo, id, valor,ambito){
+function crearSimbolo(tipo, id, valor,ambito,linea,columna){
+    if (tipo == "VAL_ENTERO"){
+        columna = columna + 4
+    }else if (tipo == "VAL_DECIMAL"){
+        columna = columna + 7
+    }else if (tipo == "VAL_CARACTER"){
+        columna = columna + 5
+    }else if (tipo == "VAL_CADENA"){
+        columna = columna + 7
+    }else if (tipo == "VAL_BANDERA"){
+        columna = columna + 9
+    }
     return {
         tipo: tipo,
         id: id,
         valor: valor,
-        ambito: ambito
+        ambito: ambito,
+        linea:linea,
+        columna:columna
     }
 }
 
@@ -34,7 +47,7 @@ class TS {
         this._simbolos = [];
         this._simbolos = this._simbolos.concat(simbolos);
     }
-    agregar(tipo, id, valor,ambito){
+    agregar(tipo, id, valor,ambito,linea,columna){
         var simbolo = this._simbolos.filter((simbolo)=>simbolo.id.toLowerCase()== id.toLowerCase())[0];
         if(simbolo){
             //Manejan si no existe variable
@@ -43,12 +56,12 @@ class TS {
         }
         else{
             if (valor == undefined){
-                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), undefined,ambito));
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), undefined,ambito,linea,columna));
                 return ""
             }
             else if (tipo == valor.tipo){
                 //Si hay casteos implicitos aca los verifican
-                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito));
+                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito,linea,columna));
                 return ""
             }else{
                 //Manejan si el casteo no existe
@@ -57,15 +70,15 @@ class TS {
                         switch(valor.tipo){
                             
                             case TIPO_VALOR.DECIMAL:
-                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), Math.trunc(valor.valor),ambito));
+                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), Math.trunc(valor.valor),ambito,linea,columna));
                                 return "";
 
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito,linea,columna));
                                 }
                                 else if (valor.valor==false){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito,linea,columna));
                                 }
                                 return "";
 
@@ -77,15 +90,15 @@ class TS {
                     case TIPO_VALOR.DECIMAL:
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
-                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito));
+                                this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), valor.valor,ambito,linea,columna));
                                 return "";
             
                             case TIPO_VALOR.BANDERA:
                                 if(valor.valor==true){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 1,ambito,linea,columna));
                                 }
                                 else if (valor.valor==false){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), 0,ambito,linea,columna));
                                 }
                                 return "";
 
@@ -113,9 +126,9 @@ class TS {
                         switch(valor.tipo){
                             case TIPO_VALOR.ENTERO:
                                 if (valor.valor == 1){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito,linea,columna));
                                 }else if (valor.valor == 0){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito,linea,columna));
                                 }else{
                                     console.log('No se pudo castear implicitamente por tipos incompatibles');
                                     return undefined;
@@ -124,9 +137,9 @@ class TS {
                             
                             case TIPO_VALOR.DECIMAL:
                                 if (valor.valor == 1){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), true,ambito,linea,columna));
                                 }else if (valor.valor == 0){
-                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito));
+                                    this._simbolos.push(crearSimbolo(tipo, id.toLowerCase(), false,ambito,linea,columna));
                                 }else{
                                     console.log('No se pudo castear implicitamente por tipos incompatibles');
                                     return undefined;

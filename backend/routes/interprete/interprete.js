@@ -25,6 +25,7 @@ function ejecutar(arbol){
         metodos.forEach(metodo2=>{
             if(metodo2.identificador.toLowerCase()==main[0].identificador.toLowerCase() ){
                 if(metodo2.parametros.length==main[0].parametros.length){
+                    tsReporte.agregar("VAL_METODO", metodo2.identificador.toLowerCase(), undefined,"MetodoExec",metodo2.linea,metodo2.columna);
                     var valoresmetodo = [];
                     for(var contador = 0; contador<main[0].parametros.length;contador++){
                         var valor = procesarexpresion(main[0].parametros[contador],tsglobal, tslocal,tipots);
@@ -41,13 +42,15 @@ function ejecutar(arbol){
                     tipots.push(".");
                     for(var contador=0;contador<main[0].parametros.length;contador++){
                         tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase() ,valoresmetodo[contador],"ParametroMain-");
-                        tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],"ParametroMain-");
+                        tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],"ParametroMain-",metodo2.parametros[contador].linea,metodo2.parametros[contador].columna);
                     }
                     ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots,"BloqueLocalPrincipal-", metodos,banderaciclo);
                 }else{
                     console.log("Error se estan mandando una cantidad de valores mayor a la que recibe el metodo")
                     salida = "Error Semantico"
                 }
+            }else{
+                tsReporte.agregar("VAL_METODO", metodo2.identificador.toLowerCase(), undefined,"Metodo",metodo2.linea,metodo2.columna);
             }
         });
     }
@@ -65,17 +68,41 @@ function GraficaTS(){
     grafo += "a0 [label=<\n"
     grafo += "<TABLE border=\"10\" cellspacing=\"10\" cellpadding=\"10\" style=\"rounded\" bgcolor=\"/rdylgn11/1:/rdylgn11/11\" gradientangle=\"315\">\n"
     grafo += "<TR>\n"
-    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"TIPO"+"</TD>\n"
     grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"IDENTIFICADOR"+"</TD>\n"
-    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"VALOR"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"TIPO DE DATO"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"TIPO"+"</TD>\n"
     grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"AMBITO"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"LINEA"+"</TD>\n"
+    grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+"COLUMNA"+"</TD>\n"
     grafo += "</TR>\n"
     for (let i = 0; i < tsReporte._simbolos.length; i++) {
         grafo += "<TR>\n"
-        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].tipo+"</TD>\n"
         grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].id+"</TD>\n"
-        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].valor+"</TD>\n"
+        if(tsReporte._simbolos[i].tipo == "VAL_ENTERO"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Int</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Variable</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_DECIMAL"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Double</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Variable</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_CARACTER"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Caracter</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Variable</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_CADENA"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Cadena</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Variable</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_BANDERA"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Bandera</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Variable</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_METODO"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Void</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Metodo</TD>\n"
+        }else if(tsReporte._simbolos[i].tipo == "VAL_FUNCION"){
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].tipo+"</TD>\n"
+            grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">Funcion</TD>\n"
+        }
         grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].ambito+"</TD>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].linea+"</TD>\n"
+        grafo += "<TD border=\"3\"  bgcolor=\"/rdylgn11/1:/rdylgn11/2\">"+tsReporte._simbolos[i].columna+"</TD>\n"
         grafo += "</TR>\n"
     }
     grafo += "</TABLE>>];\n"
@@ -258,7 +285,7 @@ function ejecutarimprimir(instruccion, tsglobal, tslocal,tipots,metodos){
 function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,metodos){
     if(instruccion.expresion == undefined){
         var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase() , valor,ambito+"Variable",metodos);
-        tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+        tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
         if (error == undefined){
             salida = "Error Semantico";
         }
@@ -268,7 +295,7 @@ function ejecutardeclaracionglobal(instruccion, tsglobal, tslocal,tipots,ambito,
             salida = "Error Semantico";
         }else{
             var error = tsglobal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -280,7 +307,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
     if(instruccion.expresion == undefined){
         if (tslocal.lengthts() == 0){
             var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+            tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
             if (error == undefined){
                 salida = "Error Semantico";
             }
@@ -288,7 +315,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
             var auxactual = tslocal.popts();
             if (auxactual.id == undefined){
                 var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
@@ -296,7 +323,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
             }else{
                 tslocal.pushts(auxactual);
                 var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
@@ -309,7 +336,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
         }else{
             if (tslocal.lengthts() == 0){
                 var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
                 if (error == undefined){
                     salida = "Error Semantico";
                 }
@@ -317,7 +344,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
                 var auxactual = tslocal.popts();
                 if (auxactual.id == undefined){
                     var error =  auxactual.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
@@ -325,7 +352,7 @@ function ejecutardeclaracionlocal(instruccion, tsglobal, tslocal,tipots,ambito,m
                 }else{
                     tslocal.pushts(auxactual);
                     var error =  tslocal.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
-                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",metodos);
+                    tsReporte.agregar(instruccion.tipo_dato, instruccion.id.toLowerCase(), valor,ambito+"Variable",instruccion.linea,instruccion.columna,metodos);
                     if (error == undefined){
                         salida = "Error Semantico";
                     }
@@ -438,7 +465,7 @@ function ejecutarllamada(instruccion, tsglobal, tslocal,tipots,ambito, metodos,b
                 tipots2.push(".");
                 for(var contador=0;contador<instruccion.parametros.length;contador++){
                     tslocal2.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],ambito+"ParametroLlamada");
-                    tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],ambito+"ParametroLlamada");
+                    tsReporte.agregar(valoresmetodo[contador].tipo, metodo2.parametros[contador].identificador.toLowerCase(),valoresmetodo[contador],ambito+"ParametroLlamada",metodo2.parametros[contador].linea,metodo2.parametros[contador].columna);
                 }
                 console.log(tslocal2._simbolos);
                 error = ejecutarbloquelocal(metodo2.instrucciones, tsglobal, tslocal2,tipots2,ambito, metodos,banderaciclo);

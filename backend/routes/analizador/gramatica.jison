@@ -94,7 +94,7 @@
 <str>"\\r"                                              {cadena += '\r';}
 <str>"\\t"                                              {cadena += '\t';}
 <str>"\\\\"                                             {cadena += '\\';}
-<str>"\\'"                                             {cadena += '\'';}
+<str>"\\'"                                              {cadena += '\'';}
 <str>["]                                                {yytext = cadena; this.popState(); return 'cadenaa'; }
 [\']("\\n"|"\\r"|"\\t"|"\\'"|"\\\""|"\\\\"|[^\'])[\']   { yytext = yytext.substring(1, yytext.length-1);
                                                         yytext = yytext.replace(/\\n/g,'\n');
@@ -146,7 +146,8 @@ CUERPO
     | MAIN                  { $$=[$1]; }
     | METODO                { $$=[$1]; }
     | DECLARACION           { $$ = [$1]; }
-    | ASIGNACION            { $$=[$1]; };
+    | ASIGNACION            { $$=[$1]; }
+    ;
 
 CUERPO2
     : CUERPO2 DECLARACION   { $1.push($2); $$=$1; }
@@ -172,19 +173,20 @@ CUERPO2
     | FOR                   { $$ = [$1]; }
     | BREAKK                { $$ = [$1]; }
     | CONTINUEE             { $$ = [$1]; }
-    | RETURNN               { $$ = [$1]; };
+    | RETURNN               { $$ = [$1]; }
+    | error { console.error('Este es un error sintáctico: ' + yytext + ', en la linea: ' + this._$.first_line + ', en la columna: ' + this._$.first_column); };
 
 MAIN
     : exec identificador parentesisa parentesisc pcoma                              {$$=INSTRUCCIONES.nuevoMain($2, []);}
     | exec identificador parentesisa VALORESLLAMADA parentesisc pcoma               {$$=INSTRUCCIONES.nuevoMain($2, $4);};
 
 METODO
-    : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec             { $$ = INSTRUCCIONES.nuevoMetodo($2, [], $6) }
-    | vacio identificador parentesisa PARAMETROS parentesisc llavea CUERPO2 llavec  { $$ = INSTRUCCIONES.nuevoMetodo($2, $4, $7) };
+    : vacio identificador parentesisa parentesisc llavea CUERPO2 llavec             { $$ = INSTRUCCIONES.nuevoMetodo($2, [], $6,this._$.first_line,this._$.first_column+6) }
+    | vacio identificador parentesisa PARAMETROS parentesisc llavea CUERPO2 llavec  { $$ = INSTRUCCIONES.nuevoMetodo($2, $4, $7,this._$.first_line,this._$.first_column+6) };
 
 PARAMETROS
-    : PARAMETROS coma TIPO identificador                                            { $1.push(INSTRUCCIONES.nuevoParametro($3,$4)); $$=$1;}
-    | TIPO identificador                                                            { $$=[INSTRUCCIONES.nuevoParametro($1, $2)]; };
+    : PARAMETROS coma TIPO identificador                                            { $1.push(INSTRUCCIONES.nuevoParametro($3,$4,this._$.first_line,this._$.first_column+1)); $$=$1;}
+    | TIPO identificador                                                            { $$=[INSTRUCCIONES.nuevoParametro($1, $2,this._$.first_line,this._$.first_column+1)]; };
 
 LLAMADA
     : identificador parentesisa VALORESLLAMADA parentesisc pcoma                    {$$=INSTRUCCIONES.nuevaLlamada($1, $3);}
@@ -199,10 +201,10 @@ VALORESLLAMADA
     | TERNARIO                                                                      {$$=[$1];};
 
 DECLARACION
-    : TIPO identificador igual EXP pcoma                                            { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
-    | TIPO identificador pcoma                                                      { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined); }
-    | TIPO identificador igual CASTEO pcoma                                         { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); }
-    | TIPO identificador igual TERNARIO pcoma                                       { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4); };
+    : TIPO identificador igual EXP pcoma                                            { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4,this._$.first_line,this._$.first_column+1); }
+    | TIPO identificador pcoma                                                      { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, undefined,this._$.first_line,this._$.first_column+1); }
+    | TIPO identificador igual CASTEO pcoma                                         { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4,this._$.first_line,this._$.first_column+1); }
+    | TIPO identificador igual TERNARIO pcoma                                       { $$=INSTRUCCIONES.nuevaDeclaracion($1, $2, $4,this._$.first_line,this._$.first_column+1); };
 
 ASIGNACION
     : identificador igual EXP pcoma                                                 { $$ = INSTRUCCIONES.nuevaAsignacion($1, $3); } 
